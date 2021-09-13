@@ -1,22 +1,6 @@
 version: '3.3'
 
 services:
-  api:
-    depends_on:
-      - mysqldb
-    env_file: .env
-    build:
-      context: ./api
-      dockerfile: ./Dockerfile
-    image: "nkardj/pbbg-api"
-    ports:
-      - "$API_LOCAL_PORT:$API_DOCKER_PORT"
-    environment:
-      - DB_HOST=$DB_HOST
-      - DB_NAME=$DB_NAME
-      - DB_PORT=$DB_DOCKER_PORT
-      - DB_USER=$DB_USER
-      - DB_PASSWORD=$DB_PASSWORD
 
   client:
     build:
@@ -41,6 +25,24 @@ services:
       - db-config:/etc/mysql
       - db-data:/var/lib/mysql
       - ./db/backup/files/:/data_backup/data
+
+  api:
+    depends_on:
+      - mysqldb
+    env_file: .env
+    build:
+      context: ./api
+      dockerfile: ./Dockerfile
+    image: "nkardj/pbbg-api"
+    ports:
+      - "$API_LOCAL_PORT:$API_DOCKER_PORT"
+    environment:
+      - DB_HOST=$DB_HOST
+      - DB_NAME=$DB_NAME
+      - DB_PORT=$DB_DOCKER_PORT
+      - DB_USER=$DB_USER
+      - DB_PASSWORD=$DB_PASSWORD
+      - DB_SOCKET_PATH=$SOCKET_PATH
 
 volumes:
   db-config:

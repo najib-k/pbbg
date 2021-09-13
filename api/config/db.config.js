@@ -5,11 +5,13 @@ var user =  process.env.DB_USER;
 var userpass =  process.env.DB_PASSWORD;
 var database = process.env.DB_NAME;
 var port = process.env.DB_PORT;
+var socket = process.env.SOCKET_PATH;
 
 const sequelize =  new Sequelize(database, user, userpass, {
     host: host,
     port: port,
     dialect: 'mysql',
+    socketPath: socket,
     pool: {
         max: 5,
         min: 0,
