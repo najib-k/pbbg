@@ -31,10 +31,10 @@ services:
   mysqldb:
     image: mysql
     restart: always
-    env_file: ./.env
+    env_file: .env
     environment:
-     - MYSQL_ROOT_PASSWORD:$DB_PASSWORD
-     - MYSQL_DATABASE:$DB_NAME
+     - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
+     - MYSQL_DATABASE=$DB_NAME
     ports:
       - $DB_LOCAL_PORT:$DB_DOCKER_PORT
     volumes:
