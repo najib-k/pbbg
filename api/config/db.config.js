@@ -24,12 +24,6 @@ const sequelize =  new Sequelize(database, user, userpass, {
     models: [__dirname + '/models']
 });
 
-start().catch((error) => {
-    console.error(error);
-    }
-
-);
-
 async function start() {
     try {
         await sequelize.authenticate();
@@ -41,3 +35,5 @@ async function start() {
         console.error('DB connection error: ', error);
     }
 };
+
+module.exports = {start}
