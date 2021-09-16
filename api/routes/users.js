@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var db = require("../config/db.config");
 
 /* GET users listing. */
 router.get('/register', function(req, res, next) {

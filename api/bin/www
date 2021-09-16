@@ -5,7 +5,7 @@
  */
 
 var app = require('../app');
-var sequelize = require('../config/db.config')
+//var sequelize = require('../config/db.config')
 var debug = require('debug')('api:server');
 var http = require('http');
 

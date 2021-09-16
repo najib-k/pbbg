@@ -35,7 +35,7 @@ services:
       dockerfile: ./Dockerfile
     image: "nkardj/pbbg-api"
     ports:
-      - "$API_LOCAL_PORT:$API_DOCKER_PORT"
+      - $API_LOCAL_PORT:$API_DOCKER_PORT
     environment:
       - DB_HOST=$DB_HOST
       - DB_NAME=$DB_NAME
@@ -43,6 +43,14 @@ services:
       - DB_USER=$DB_USER
       - DB_PASSWORD=$DB_PASSWORD
       - DB_SOCKET_PATH=$SOCKET_PATH
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
 
 volumes:
   db-config:
