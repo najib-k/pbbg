@@ -1,4 +1,4 @@
-import {Table, Column, DataType, Model, HasOne} from 'sequelize-typescript';
+import {Table, Column, DataType, Model, ForeignKey} from 'sequelize-typescript';
 import {Player} from "./Player";
 
 @Table
@@ -8,14 +8,14 @@ export class Message extends Model {
         allowNull: false})
     content!: string;
 
-    @HasOne(() => Player)
-    @Column({
-        allowNull: false})
+
+    @ForeignKey(() => Player)
     origin!: Player;
 
     @Column({
         type: DataType.INTEGER,
         allowNull: false})
     room!: number;
+
 
 }

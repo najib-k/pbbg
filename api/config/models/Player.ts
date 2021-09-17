@@ -1,4 +1,5 @@
-import { Table, Column, DataType, Model } from 'sequelize-typescript';
+import {Table, Column, DataType, Model, HasMany} from 'sequelize-typescript';
+import {Message} from "./Message";
 
 @Table
 export class Player extends Model {
@@ -16,5 +17,8 @@ export class Player extends Model {
         type: DataType.STRING,
         allowNull: false})
     password!: string;
+
+    @HasMany (() => Message)
+    messages?: Message[];
 
 }
