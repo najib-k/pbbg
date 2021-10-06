@@ -8,6 +8,8 @@ var app = require('../app');
 //var sequelize = require('../config/db.config')
 var debug = require('debug')('api:server');
 var http = require('http');
+const socketIo = require('socket.io');
+
 
 /**
  * Get port from environment and store in Express.
@@ -22,6 +24,12 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
+/**
+ *  socketIO setup
+ */
+
+const io = socketIo(server);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -91,3 +99,4 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
+module.exports = io;

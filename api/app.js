@@ -8,7 +8,6 @@ var logger = require('morgan');
 var cors = require('cors');
 const bodyParser = require('body-parser');
 
-
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
