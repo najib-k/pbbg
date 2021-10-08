@@ -2,6 +2,7 @@ var express = require('express');
 const {Player} = require("../config/models/Player");
 const bcrypt = require('bcrypt');
 const {Op} = require("sequelize");
+const jwt = require("jsonwebtoken");
 var router = express.Router();
 
 /* GET home page. */
@@ -25,13 +26,11 @@ router.post('/register',  async function(req, res, next) {
     const player = await Player.create({
       name: req.body.name, mail: req.body.mail, password: hash
     });
-    return res.status(200).send({player: {
-        id: player.id,
-        mail: player.mail,
-        name: player.name
-      },
-      users: await Player.findAll()
-    });
+    const accessToken = jwt.sign({
+      name: player.name,
+      id: player.id
+    }, process.env.JWT_SECRET);
+    return res.status(200).send({token: accessToken});
   });
 
 });
@@ -58,9 +57,14 @@ router.post('/login',  async function(req, res, next) {
   await bcrypt.compare(body.password, exists.password, async function(err, match) {
     if (err || !match)
       return res.status(400).send("Invalid credentials.");
+    const accessToken = jwt.sign({
+      name: exists.name,
+      id: exists.id
+    }, process.env.JWT_SECRET);
     return res.status(200).send({
       message: "user logged in successfully.",
-      player: exists
+      player: exists,
+      token: accessToken
     });
   });
 });
