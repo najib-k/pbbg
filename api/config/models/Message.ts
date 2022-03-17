@@ -1,21 +1,19 @@
 import {Table, Column, DataType, Model, ForeignKey} from 'sequelize-typescript';
 import {Player} from "./Player";
+import { Channel } from "./Channel"
 
 @Table
 export class Message extends Model {
     @Column ({
         type: DataType.STRING,
         allowNull: false})
-    content!: string;
+    text!: string;
 
 
     @ForeignKey(() => Player)
-    origin!: Player;
+    sender!: Player;
 
-    @Column({
-        type: DataType.INTEGER,
-        allowNull: false})
-    room!: number;
-
+    @ForeignKey( () => Channel)
+    channel!: Channel;
 
 }

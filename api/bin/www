@@ -29,7 +29,17 @@ var server = http.createServer(app);
  *  socketIO setup
  */
 
-const io = socketIo(server);
+io = socketIo(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
+io.on('connection', (socket) => {
+  console.log('new connection');
+  //socket.emit('connection', null);
+});
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -96,7 +106,6 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  console.log('Listening on ' + bind);
 }
 
-module.exports = io;

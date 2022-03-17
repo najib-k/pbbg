@@ -1,9 +1,17 @@
-import logo from './logo.svg';
+//import logo from './logo.svg';
 import './App.css';
+import socketClient from "socket.io-client";
+import {Chat} from "./chat/Chat";
 
+const SERVER = "localhost:3369";
 function App() {
+  var socket = socketClient(SERVER);
+  socket.on('connection', () => {
+    console.log("front connected");
+  })
+
   return (
-    <div className="App">
+    /*<div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -18,7 +26,10 @@ function App() {
           Learn React
         </a>
       </header>
-    </div>
+    </div>*/
+      <div  className="App">
+        <Chat />
+      </div>
   );
 }
 
