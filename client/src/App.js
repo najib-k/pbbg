@@ -1,14 +1,10 @@
 //import logo from './logo.svg';
 import './App.css';
-import socketClient from "socket.io-client";
 import {Chat} from "./chat/Chat";
+import Appbar from "./Appbar";
 
-const SERVER = "localhost:3369";
+
 function App() {
-  var socket = socketClient(SERVER);
-  socket.on('connection', () => {
-    console.log("front connected");
-  })
 
   return (
     /*<div className="App">
@@ -27,9 +23,12 @@ function App() {
         </a>
       </header>
     </div>*/
-      <div  className="App">
-        <Chat />
-      </div>
+      <StyledEngineProvider injectFirst>
+          <Appbar />
+          <div  className="App">
+              <Chat />
+          </div>
+      </StyledEngineProvider>
   );
 }
 

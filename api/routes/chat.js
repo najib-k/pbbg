@@ -7,8 +7,16 @@ const { Channel } = require("../config/models/Channel")
 
 router.get('/getChannels', async function(req, res, ) {
     res.json({
-        channels: await Channel.findAll()
+        channels: await Channel.findAll({include: [Message]})
     })
+});
+
+router.get('/getChannelMessages', async function (req, res) {
+    let channelId = req.body.channelId;
+    let channel = await Channel.findOne({where: {id: channelId}, include: [Message]});
+    res.json({
+        messages: channel.messages
+    });
 });
 
 module.exports = router;

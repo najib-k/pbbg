@@ -2,6 +2,20 @@ import React from "react";
 import { Message } from "./Message";
 
 export class MessagePanel extends React.Component {
+
+    state = {input_value: ''};
+
+    inputHandler = e =>  {
+        this.setState({input_value: e.target.value});
+    }
+
+    send = () => {
+        if (this.state.input_value && this.state.input_value !== '') {
+            this.props.onSendMessage(this.props.channel, this.state.input_value);
+            this.setState({input_value: ''})
+        }
+    }
+
     render() {
 
         let list = <div className="no-content-message">No messages to be displayed.</div>;
@@ -15,11 +29,12 @@ export class MessagePanel extends React.Component {
 
                 <div className="messages-list">{list}</div>
 
+                { this.props.channel &&
                 <div className="messages-input">
 
-                    <input type="text"/>
-                        <button>Send</button>
-                </div>
+                    <input type="text" onChange={this.inputHandler} value={this.state.input_value}/>
+                        <button onClick={this.send}>Send</button>
+                </div> }
             </div>
         );
     }

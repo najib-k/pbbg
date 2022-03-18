@@ -12,6 +12,12 @@ export class Channel extends Model {
         type: DataType.INTEGER})
     participants!: number;
 
+    @Column ({
+        type: DataType.TEXT})
+    sockets!: string;
+
     @HasMany( () => Message)
     messages?: Message[];
+
+
 }

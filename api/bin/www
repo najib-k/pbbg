@@ -9,6 +9,9 @@ var app = require('../app');
 var debug = require('debug')('api:server');
 var http = require('http');
 const socketIo = require('socket.io');
+const {Player} = require("../config/models/Player");
+const {Channel} = require("../config/models/Channel");
+const {Message} = require("../config/models/Message");
 
 
 /**
@@ -38,8 +41,52 @@ io = socketIo(server, {
 
 io.on('connection', (socket) => {
   console.log('new connection');
-  //socket.emit('connection', null);
+  socket.emit('connection', null);
+  socket.on('channel-join', async function (data) {
+    console.log("lol");
+    console.log(data);
+    let player = await Player.findOne( { where: { id: data.playerId } })
+    let channels = await Channel.findAll();
+    console.log(player.name + " joined channel : " + data.id);
+    channels.forEach(c => {
+      console.log(c.sockets);
+      let sockets = JSON.parse(c.sockets).ids;
+      console.log("list = " + sockets);
+      if (c.id === data.id) {
+        if (sockets.indexOf(socket.id) == (-1)) {
+          sockets.push(socket.id);
+          c.participants++;
+          c.sockets = JSON.stringify({ids : sockets});
+          c.save();
+          io.emit('channel', c);
+        }
+      } else {
+        let index = sockets.indexOf(socket.id);
+        if (index != (-1)) {
+          sockets.splice(index, 1);
+          c.participants--;
+          c.sockets = JSON.stringify({ids : sockets});
+          c.save();
+          io.emit('channel', c);
+        }
+      }
+    });
+
+    return data.id;
+  })
+  socket.on('message-received', async function (data) {
+    let sender = await Player.findOne({where: {id: data.player}});
+    let channel = await Channel.findOne({where: { id: data.channelId }});
+    let message = await Message.create({
+      text: data.message,
+      sender: sender.id,
+      channel: channel.id,
+      createdAt: data.date
+    });
+    io.emit('message', message);
+  });
 });
+
 
 /**
  * Listen on provided port, on all network interfaces.
