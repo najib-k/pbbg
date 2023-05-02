@@ -11,16 +11,22 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
-    "jsonwebtoken": "^8.5.1",
+    "@types/color": "^3.0.3",
+    "@types/jest": "^29.5.1",
+    "@types/node": "^18.16.3",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.1",
+    "color": "^4.2.3",
+    "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.21",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^6.8.1",
-    "react-scripts": "4.0.3",
+    "react-scripts": "^5.0.1",
     "recharts": "^2.2.0",
     "sass": "^1.49.9",
     "socket.io-client": "^4.4.1",
-    "typescript": "^5.0.3",
+    "typescript": "^5.0.4",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
@@ -29,6 +35,11 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "overrides": {
+    "react-scripts": {
+      "typescript": "^5"
+    }
   },
   "proxy": "http://localhost:3369",
   "eslintConfig": {
