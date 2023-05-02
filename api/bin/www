@@ -1,0 +1,235 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var debug = require('debug')('api:server');
+var http = require('http');
+const socketIo = require('socket.io');
+const jwt = require("jsonwebtoken");
+const { Player } = require("../config/models/Player");
+const { Channel } = require("../config/models/Channel");
+const { Message } = require("../config/models/Message");
+const { ErrorLog } = require("../config/models/ErrorLog")
+const { PlayerChannels } = require('../config/models/PlayerChannels');
+const constants = require('./constants');
+const { join } = require('path');
+const { constant } = require('lodash');
+
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.API_LOCAL_PORT || '3000');
+
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+/**
+ *  socketIO setup
+ */
+
+/**
+ * JWT validation middleware for socket IO
+ * create socket.data.player with id & other infos.
+ * 
+ * @param socket 
+ * @param next 
+ * @returns 
+ */
+const authSocketMiddleware = (socket, next) => {
+  // since you are sending the token with the query
+  const token = socket.handshake?.auth?.token;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    socket.data.player = decoded;
+  } catch (err) {
+    console.log("error in sock JWT: " + err);
+    ErrorLog.create({type: constants.ERROR.SOCKET.JWT_HANDSHAKE_FAILED, details: err});
+    return next(new Error("NOT AUTHORIZED"));
+  }
+  next();
+};
+
+/**
+ * This function automatically joins static and player-bound rooms
+ * when a socket connects to the server.
+ * 
+ * @param socket Socket received on new connection
+ */
+async function autoJoinChannels(socket) {
+  try {
+    //Liaisons to static channels created on account creation.
+    let playerChans = await Player.findOne({ where: { id: socket.data.player.id }, include: [{ model: Channel, attributes: ['name'] }] });
+    console.log("PlayerChans: " + JSON.stringify(playerChans));
+    let joinChannels = [...playerChans.channels.map(chan => { return chan.name })];
+    joinChannels.forEach(c => {
+      socket.join(c);
+    })
+    console.log("Auto Joined channels: " + joinChannels.join(" | "));
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+}
+
+io = socketIo(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
+io.use((socket, next) => {
+  authSocketMiddleware(socket, next);
+});
+
+io.on('connection', async (socket) => {
+  console.log('new socket connection');
+  //join static channels on connection.
+  autoJoinChannels(socket);
+  //socket.emit('connection', null);
+
+  /**
+   * Player change channel
+   */
+  socket.on('channel-join', async function (data) {
+
+    //if socket already present in channel then ignore
+    //and temrinate request
+    // no need for socket list. let joinSocks = JSON.parse(joinChannel.sockets);
+    if (data.leaveId === data.joinId) return data.joinId;
+
+    //let player = await Player.findOne({ where: { id: socket.data.player.id } })
+    let joinChannel = await Channel.findOne({ where: { id: data.joinId } });
+    let leaveChannel = await Channel.findOne({ where: { id: data.leaveId } });
+
+    //TODO handle error if the client asks for non existing channels
+    if (!joinChannel || !leaveChannel) { 
+      ErrorLog.create({type: constants.ERROR.CHAT.UNKNOWN_CHANNEL_SIO_CHANNELSWITCH, details: {joinChannel, leaveChannel}});
+      return {err: true};
+    }
+
+    // If this is not a defautl chan then leave & join rooms
+    //Logic unused for now
+    /* if (!constants.chatChannels.includes(leaveChannel.name)) {
+      socket.join(joinChannel.name);
+      socket.leave(leaveChannel.name);
+
+      // Update DB
+      PlayerChannels.findOrCreate({ where: { playerId: socket.data.player.id, channelId: joinChannel.id } });
+
+      console.log(socket.data.player.id + " leaving channel : " + leaveChannel.name);
+      PlayerChannels.destroy({ where: { playerId: socket.data.player.id, channelId: leaveChannel.id } });
+    }
+ */
+    //Update number of people actually in the room (looking at it)
+    joinChannel.participants = io.of("/").adapter.rooms.get(joinChannel.name).size + 1;
+    joinChannel.save();
+    leaveChannel.participants = io.of("/").adapter.rooms.get(leaveChannel.name).size - 1;
+    leaveChannel.save();
+
+    io.in(joinChannel.name).emit("channel", joinChannel);
+    io.in(leaveChannel.name).emit("channel", leaveChannel);
+
+    return data.joinId;
+  });
+
+  //Message sent from a client
+  //dispatch the message to relevant sockets.
+  socket.on('message-received', async function (data) {
+    //ignore message if too long
+    if (data.message.length > 240) return;
+
+    //too many db call, useless, verything in socket data & packet.
+    let sender = await Player.findOne({ where: { id: socket.data.player.id }, attributes: ["name", "id"] }); //Attributes name/id only
+    let channel = await Channel.findOne({ where: { id: data.channelId }, attributes: ["name", "id"] });
+
+    let message = await Message.create({
+      text: data.message,
+      playerId: sender.id, //sent in socket
+      channelId: channel.id, //sent in data
+      createdAt: data.date
+    });
+
+    console.log("Sending message " + JSON.stringify({ ...message.toJSON(), player: sender }));
+    io.in(channel.name).emit('message', { ...message.toJSON(), player: sender }); //player in socket.data
+  });
+});
+
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  console.log('Listening on ' + bind);
+}
+
