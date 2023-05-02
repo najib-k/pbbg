@@ -1,4 +1,3 @@
-var { sequelize, start } = require('./config/db.config');
 
 var createError = require('http-errors');
 var express = require('express');
@@ -8,6 +7,7 @@ var logger = require('morgan');
 var cors = require('cors');
 const bodyParser = require('body-parser');
 const jwt = require("jsonwebtoken");
+var { sequelize, start } = require('./config/db.config');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
