@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import CSS from 'csstype'
 import { SxProps } from '@mui/material/styles';
+import TilePopover from '../gameMap/TilePopover';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
 
 interface ITyleType {
     name: string,
@@ -21,6 +23,8 @@ function Tile({ tile, pos, size: { width, height } }: {
     size: any,
 }) {
 
+    const [isOpen, setIsOpen] = useState({ open: false, target: null });
+
     let style: SxProps = {
         width: `${width}px`,
         height: `${height}px`,
@@ -30,8 +34,21 @@ function Tile({ tile, pos, size: { width, height } }: {
         backgroundColor: DEFAULT_TILES[tile].color,
     };
 
+    const handleClose = (event) => {
+        setIsOpen({ open: false, target: null });
+    }
+
+    const handleOpen = (event) => {
+        let { target } = event;
+        setIsOpen({ open: true, target })
+    }
+
     return (<>
-        <Box sx={style}></Box>
+        <ClickAwayListener onClickAway={handleClose}>
+            <Box onClick={handleOpen} sx={style}>
+            </Box>
+        </ClickAwayListener>
+        <TilePopover {...pos} terrain={DEFAULT_TILES[tile].name} isOpen={isOpen} />
     </>)
 }
 
