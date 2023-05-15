@@ -23,7 +23,7 @@ export class Channel extends Model {
     messages?: Message[];
 
     @BelongsToMany(() => Player, () => PlayerChannels)
-    players: Player[];
+    players?: Player[];
 
 
 }

@@ -23,6 +23,18 @@ export class Player extends Model {
     })
     password?: string;
 
+    @Column({
+        type: DataType.JSON
+    })
+    stats?: JSON;
+
+    @Column({
+        type: DataType.JSON
+    })
+    inventory?: JSON;
+
+
+
     @HasMany(() => Message, 'playerId')
     messages?: Message[];
 

@@ -32,6 +32,16 @@ __decorate([
     })
 ], Player.prototype, "password", void 0);
 __decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.JSON
+    })
+], Player.prototype, "stats", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.JSON
+    })
+], Player.prototype, "inventory", void 0);
+__decorate([
     (0, sequelize_typescript_1.HasMany)(() => Message_1.Message, 'playerId')
 ], Player.prototype, "messages", void 0);
 __decorate([
