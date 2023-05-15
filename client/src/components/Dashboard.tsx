@@ -9,6 +9,7 @@ import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import { SockProvider } from './SockProvider';
 import GameMap from './GameMap';
+import ActionDisplay from './ActionDisplay';
 
 
 function Copyright(props: any) {
@@ -33,6 +34,13 @@ const mdTheme = createTheme({
           height: '100%',
         }
       }
+    },
+    MuiGrid: {
+      styleOverrides: {
+        root: {
+          padding: '10px',
+        }
+      }
     }
   }
 });
@@ -53,41 +61,36 @@ function DashboardContent() {
             overflow: 'auto',
           }}>
 
-          <Grid container direction="column" justifyContent="flex-start" spacing={3} sx={{ height: '100%' }}>
-            <Grid item container sx={{ height: '15%' }} spacing={2}>
-              <Grid item xs={10} >
-                <Paper >10 sized</Paper>
-              </Grid>
-              <Grid item xs={2}>
-                <Paper >2</Paper>
-              </Grid>
-
-
+          <Grid container justifyContent={"center"} sx={{ minHeight: '15%' }} spacing={2}>
+            <Grid item xs={10} >
+              <Paper > <ActionDisplay /> </Paper>
             </Grid>
-            <Grid item container spacing={2} sx={{ height: '55%' }}>
-              <Grid item xs={2}>
-                <Paper >2</Paper>
-              </Grid>
-              <Grid item xs={8}>
-                <Paper ><GameMap></GameMap></Paper>
-              </Grid>
-              <Grid item xs={2}>
-                <Paper >2</Paper>
-              </Grid>
 
-            </Grid>
-            <Grid item container spacing={2} sx={{ height: '30%', maxHeight: '30vh' }}>
-              <Grid item xs={2}>
-                <Paper >2</Paper>
-              </Grid>
-              <Grid item xs={8}>
-                <Paper ><Chat /></Paper>
-              </Grid>
-              <Grid item xs={2}>
-                <Paper >2</Paper>
-              </Grid>
 
+          </Grid>
+          <Grid container spacing={2} sx={{ height: '55%' }}>
+            <Grid item xs={2}>
+              <Paper >2</Paper>
             </Grid>
+            <Grid item xs={8}>
+              <Paper ><GameMap/></Paper>
+            </Grid>
+            <Grid item xs={2}>
+              <Paper >2</Paper>
+            </Grid>
+
+          </Grid>
+          <Grid container spacing={2} sx={{ minheight: '30%', maxHeight: '30%' }}>
+            <Grid item xs={2}>
+              <Paper >2</Paper>
+            </Grid>
+            <Grid item xs={8}>
+              <Paper ><Chat /></Paper>
+            </Grid>
+            <Grid item xs={2}>
+              <Paper >2</Paper>
+            </Grid>
+
           </Grid>
         </Box>
 

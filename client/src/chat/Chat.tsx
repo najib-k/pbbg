@@ -35,7 +35,7 @@ export default function Chat() {
 
         setChannel(joinId);
         socket.emit('channel-join', { joinId, leaveId }, (ack: any) => {
-            console.log("joined channel !")
+            
         })
     };
 
@@ -45,7 +45,6 @@ export default function Chat() {
      * @param {Object} message message content
      */
     const sendMessage = (message: string) => {
-        console.log("Emoitting message " + message);
         socket.emit('message-received', {
             channelId: channel,
             message: message,
@@ -70,11 +69,9 @@ export default function Chat() {
     useEffect(() => {
 
         function sockOnConnect() {
-            console.log("front connected: " + socket.id);
         };
 
         function sockOnChannel(chan: any) {
-            console.log("OnChannel");
 
             setChannels((chans: any) => {
                 return chans.map((c: any) => {
@@ -90,11 +87,10 @@ export default function Chat() {
          * @param {Object} message received message as object
          */
         function sockOnMessage(message: any) {
-            console.log("OnMessage");
             setChannels((chans: any) => {
                 let newchans = chans.map((c: any) => {
                     if (c.id === message.channelId) {
-                        console.log("New message registered");
+                        //console.log("New message registered");
                         if (c?.messages[0].id !== message.id) {
                             c.messages.unshift(message);
                         } else if (c.messages.length <= 0) {
@@ -119,7 +115,7 @@ export default function Chat() {
         function configureSocket() {
             socket.connect();
             socket.on('connect', sockOnConnect);
-            socket.on("disconnect", () => console.log("Front disconnected"));
+            socket.on("disconnect", () => console.log("socket disconnected"));
             socket.on('channel', sockOnChannel);
             socket.on('message', sockOnMessage);
         }

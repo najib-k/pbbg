@@ -1,4 +1,3 @@
-
 //TODO global error handling with status messages.
 
 const loginPOST = async (data: object) => {
@@ -35,5 +34,6 @@ const chatChannelMessageGET = async (id: number) => {
     };
     return await fetch('chat/getChannelMessages', requestOptions).then(response => { return response.json()});
 }
+
 
 export {loginPOST, registerPOST, chatChannelsGET, chatChannelMessageGET};
