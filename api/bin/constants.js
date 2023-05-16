@@ -15,6 +15,19 @@ const chatChannels = [
     "test", //test 1
 ]
 
+const user = {
+    default: {
+        stats : {
+            maxAction: 100,
+            health: 10,
+            defense: 1,
+            attack: 1,
+            level: 0,
+        },
+        currentActions: 0,
+    }
+}
+
 // Querry limit for chat messages
 // Currently used outside of query
 // TODO limit the actual querying.

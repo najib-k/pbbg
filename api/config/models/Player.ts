@@ -2,6 +2,7 @@ import { Table, Column, DataType, Model, HasMany, BelongsToMany } from 'sequeliz
 import { Message } from "./Message";
 import { PlayerChannels } from './PlayerChannels';
 import { Channel } from './Channel';
+import { Inventory } from './Inventory';
 
 @Table
 export class Player extends Model {
@@ -28,12 +29,8 @@ export class Player extends Model {
     })
     stats?: JSON;
 
-    @Column({
-        type: DataType.JSON
-    })
-    inventory?: JSON;
-
-
+    @HasMany(() => Inventory, 'playerId')
+    inventories?: Inventory[];
 
     @HasMany(() => Message, 'playerId')
     messages?: Message[];

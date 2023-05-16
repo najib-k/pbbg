@@ -11,6 +11,7 @@ const sequelize_typescript_1 = require("sequelize-typescript");
 const Message_1 = require("./Message");
 const PlayerChannels_1 = require("./PlayerChannels");
 const Channel_1 = require("./Channel");
+const Inventory_1 = require("./Inventory");
 let Player = class Player extends sequelize_typescript_1.Model {
 };
 __decorate([
@@ -37,10 +38,8 @@ __decorate([
     })
 ], Player.prototype, "stats", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.JSON
-    })
-], Player.prototype, "inventory", void 0);
+    (0, sequelize_typescript_1.HasMany)(() => Inventory_1.Inventory, 'playerId')
+], Player.prototype, "inventories", void 0);
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => Message_1.Message, 'playerId')
 ], Player.prototype, "messages", void 0);
