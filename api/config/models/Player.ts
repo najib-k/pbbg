@@ -1,8 +1,10 @@
-import { Table, Column, DataType, Model, HasMany, BelongsToMany } from 'sequelize-typescript';
+import { Table, Column, DataType, Model, HasMany, BelongsToMany, HasOne } from 'sequelize-typescript';
 import { Message } from "./Message";
 import { PlayerChannels } from './PlayerChannels';
 import { Channel } from './Channel';
 import { Inventory } from './Inventory';
+import { Action } from './Action';
+import { ActionGroup } from './ActionGroup';
 
 @Table
 export class Player extends Model {
@@ -29,7 +31,10 @@ export class Player extends Model {
     })
     stats?: JSON;
 
-    @HasMany(() => Inventory, 'playerId')
+    @HasMany(() => Action)
+    actions?: Action[];
+
+    @HasMany(() => Inventory)
     inventories?: Inventory[];
 
     @HasMany(() => Message, 'playerId')

@@ -25,6 +25,17 @@ const user = {
             level: 0,
         },
         currentActions: 0,
+        action: {
+            type: "idle",
+        }
+    }
+}
+
+const action = {
+    STATUS: {
+        NEW: "new",
+        RUNNING: "running",
+
     }
 }
 
@@ -34,6 +45,8 @@ const user = {
 const chatMessageLimit = 100;
 
 module.exports =  {
+    action,
+    user,
     chatChannels,
     chatMessageLimit,
     ERROR,

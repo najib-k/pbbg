@@ -9,11 +9,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const Player_1 = require("./Player");
-const Items_1 = require("./Items");
+const Item_1 = require("./Item");
 let Inventory = class Inventory extends sequelize_typescript_1.Model {
 };
 __decorate([
-    (0, sequelize_typescript_1.HasMany)(() => Items_1.Item)
+    (0, sequelize_typescript_1.HasMany)(() => Item_1.Item)
 ], Inventory.prototype, "uuids", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
@@ -22,10 +22,11 @@ __decorate([
     })
 ], Inventory.prototype, "others", void 0);
 __decorate([
-    (0, sequelize_typescript_1.ForeignKey)(() => Player_1.Player)
+    (0, sequelize_typescript_1.ForeignKey)(() => Player_1.Player),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER })
 ], Inventory.prototype, "playerId", void 0);
 __decorate([
-    (0, sequelize_typescript_1.BelongsTo)(() => Player_1.Player, 'playerId')
+    (0, sequelize_typescript_1.BelongsTo)(() => Player_1.Player)
 ], Inventory.prototype, "player", void 0);
 Inventory = __decorate([
     sequelize_typescript_1.Table

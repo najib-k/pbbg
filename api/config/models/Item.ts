@@ -1,5 +1,6 @@
 import { Table, Column, DataType, Model, ForeignKey, BelongsTo, HasMany, PrimaryKey } from 'sequelize-typescript';
 import { Player } from './Player';
+import { Inventory } from './Inventory';
 
 @Table
 export class Item extends Model {
@@ -18,14 +19,20 @@ export class Item extends Model {
     stats?: JSON;
 
     @Column({
-        type: DataType.NUMBER,
+        type: DataType.INTEGER,
         allowNull: false
     })
-    rarity?: number;
+    rarity!: number;
 
-    @ForeignKey(() => Player)
-    playerId!: Player;
+    @Column({
+        type: DataType.STRING
+    })
+    type!: string;
 
-    @BelongsTo(() => Player, 'playerId')
-    player!: Player;
+    @ForeignKey(() => Inventory)
+    @Column({type: DataType.INTEGER})
+    inventoryId?: number;
+
+    @BelongsTo(() => Inventory)
+    inventory!: Inventory;
 }

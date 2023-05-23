@@ -3,6 +3,7 @@ version: '3.3'
 services:
 
   client:
+    profiles: ["full"]
     build:
       context: ./client
       dockerfile: ./Dockerfile
@@ -15,22 +16,8 @@ services:
     links:
       - "api:server"
 
-  mysqldb:
-    image: mysql
-    restart: always
-    env_file: .env
-    environment:
-     - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
-     - MYSQL_DATABASE=$DB_NAME
-     - MYSQL_ALLOW_EMPTY_PASSWORD=true
-    ports:
-      - $DB_LOCAL_PORT:$DB_DOCKER_PORT
-    volumes:
-      - db-config:/etc/mysql
-      - db-data:/var/lib/mysql
-      - ./db/backup/files/:/data_backup/data
-
   api:
+    profiles: ["full"]
     depends_on:
       - mysqldb
     env_file: .env
@@ -48,14 +35,33 @@ services:
       - DB_PASSWORD=$DB_PASSWORD
       - DB_SOCKET_PATH=$SOCKET_PATH
 
+  mysqldb:
+    profiles: ["full", "dev"]
+    image: mysql
+    restart: always
+    env_file: .env
+    environment:
+     - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
+     - MYSQL_DATABASE=$DB_NAME
+     - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    ports:
+      - $DB_LOCAL_PORT:$DB_DOCKER_PORT
+    volumes:
+      - db-config:/etc/mysql
+      - db-data:/var/lib/mysql
+      - ./db/backup/files/:/data_backup/data
+
+
   phpmyadmin:
+    depends_on:
+        - mysqldb
+    profiles: ["full", "dev"]
     image: phpmyadmin
     restart: always
     ports:
-      - 8080:80
+      - 8081:80
     environment:
       - PMA_ARBITRARY=1
-
 volumes:
   db-config:
   db-data:

@@ -38,7 +38,12 @@ __decorate([
     })
 ], Player.prototype, "stats", void 0);
 __decorate([
-    (0, sequelize_typescript_1.HasMany)(() => Inventory_1.Inventory, 'playerId')
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING
+    })
+], Player.prototype, "action", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => Inventory_1.Inventory)
 ], Player.prototype, "inventories", void 0);
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => Message_1.Message, 'playerId')

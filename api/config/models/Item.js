@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
-const Player_1 = require("./Player");
+const Inventory_1 = require("./Inventory");
 let Item = class Item extends sequelize_typescript_1.Model {
 };
 __decorate([
@@ -26,16 +26,22 @@ __decorate([
 ], Item.prototype, "stats", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.NUMBER,
+        type: sequelize_typescript_1.DataType.INTEGER,
         allowNull: false
     })
 ], Item.prototype, "rarity", void 0);
 __decorate([
-    (0, sequelize_typescript_1.ForeignKey)(() => Player_1.Player)
-], Item.prototype, "playerId", void 0);
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING
+    })
+], Item.prototype, "type", void 0);
 __decorate([
-    (0, sequelize_typescript_1.BelongsTo)(() => Player_1.Player, 'playerId')
-], Item.prototype, "player", void 0);
+    (0, sequelize_typescript_1.ForeignKey)(() => Inventory_1.Inventory),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER })
+], Item.prototype, "inventoryId", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => Inventory_1.Inventory)
+], Item.prototype, "inventory", void 0);
 Item = __decorate([
     sequelize_typescript_1.Table
 ], Item);

@@ -43,7 +43,10 @@ router.post('/register', async function (req, res, next) {
         return res.status(400).send({ error: "Error during account creation, please contact an admin." });
       }
       const player = await Player.create({
-        name: req.body.name, mail: req.body.mail, password: hash
+        name: req.body.name, mail: req.body.mail, password: hash,
+        stats: {...constants.user.default.stats},
+        action: null,
+        inventory: [await Inventory.create({others: {}})]
       });
 
       // Create relation to basic chat channels, passing only player.id newly created
