@@ -4,7 +4,6 @@ import { PlayerChannels } from './PlayerChannels';
 import { Channel } from './Channel';
 import { Inventory } from './Inventory';
 import { Action } from './Action';
-import { ActionGroup } from './ActionGroup';
 
 @Table
 export class Player extends Model {
@@ -31,8 +30,16 @@ export class Player extends Model {
     })
     stats?: JSON;
 
-    @HasMany(() => Action)
+    @Column({
+        type: DataType.INTEGER
+    })
+    currentActions?: number;
+
+    @HasMany(() => Action, 'playerId')
     actions?: Action[];
+
+    @HasOne(() => Action, 'playerId')
+    lastAction?: Action;
 
     @HasMany(() => Inventory)
     inventories?: Inventory[];

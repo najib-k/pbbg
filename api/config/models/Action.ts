@@ -14,7 +14,7 @@ export class Action extends Model {
     @Column({type: DataType.INTEGER})
     playerId!: Player;
 
-    @BelongsTo(() => Player)
+    @BelongsTo(() => Player, 'playerId')
     player!: Player;
 
 }
