@@ -45,7 +45,7 @@ router.post('/register', async function (req, res, next) {
       const player = await Player.create({
         name: req.body.name, mail: req.body.mail, password: hash,
         stats: {...constants.user.default.stats},
-        action: null,
+        currentAction: constants.user.default.currentActions,
         inventory: [await Inventory.create({others: {}})]
       });
 

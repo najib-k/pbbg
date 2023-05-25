@@ -7,6 +7,8 @@ const { Player } = require('../config/models/Player');
 const constants = require('../bin/constants');
 const { orderByDate } = require('./routeUtils')
 
+router.use(verifyToken);
+
 router.get('/getChannels', async function (req, res,) {
     console.log("/getChannels");
     Channel.findAll({ include: [{ model: Message, include: [{ model: Player, attributes: ["name", "id"] }] }] })
