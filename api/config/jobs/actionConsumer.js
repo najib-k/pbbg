@@ -2,7 +2,10 @@ const { Op } = require("sequelize");
 const { Player } = require("../models/Player");
 const { Inventory } = require("../models/Inventory");
 const { Item } = require("../models/Item");
-const {action} = require("../../bin/constants")
+const {action} = require("../../bin/constants");
+const { spawnFromTile } = require("../../bin/spawnHandler");
+const { Action } = require("../models/Action");
+const { fight } = require('../../bin/battleHandler');
 
 const actionFn = {
   battling: {
@@ -10,31 +13,65 @@ const actionFn = {
   }
 }
 
-function generateNewBattle(p) {
+async function generateNewBattle(p) {
+  let b = {
+    ennemy: spawnFromTile(p),
+    pTurn: true,
+  };
 
+  p.actions[0].data = b;
+  p.actions[0].save(); 
+  (p.actions || (p.actions = [])).push(a);
 }
 
-function processFight(p, a = null) {
+async function newBattleAction(p) {
 
+  let a =  await Action.create({
+    type: "battling",
+    status: action.STATUS.NEW,
+    data: {},
+    player: p,
+  });
+
+  (p.actions || (p.actions = [])).push(a);
 }
 
-function battlingAction(p) {
-  if (p.a[0].status === action.STATUS.NEW) {
-    generateNewBattle(p);
+function processBattle(p, a = null) {
+  r = fight(p, p.action[0].data.ennemy, p.action[0].status);
+  if (end) {
+    p.action[0].status = action.STATUS.COMPLETED;
+  } else {    
+    p.actions[0].status = action.STATUS.RUNNING;
   }
-  processFight(p);
+}
+
+async function battlingAction(p) {
+  //p.currentActions -= 1;
+  if (p.actions[0].status === action.STATUS.NEW) {
+    await generateNewBattle(p);
+  }
+  processBattle(p);
+  p.lastAction = p.actions[0];
+  if (p.actions[0].status === action.STATUS.COMPLETED) {
+    if (p.actions.length > 1) {
+      p.actions = p.actions.slice(1);
+    } else {
+      p.actions = [await newBattleAction(p)];
+    }
+  }
   p.save();
 }
 
 async function actionConsumer() {
-  let actions = await Player.findAll({where: {
-    action: {
-      [Op.not]: null,
+  let ps = await Player.findAll({where: {
+    currentActions: {
+      [Op.gt]: 0,
     }
-  }, include: [{model: Inventory, include: [{model: Item}]}],
+  }, include: [{model: Action, as: "actions", required: true}, {model: Inventory, include: [{model: Item}]}],
   attributes: {exclude: ['password']}});
 
-  actions.forEach((a) => {
+  ps.forEach((p) => {
+    actionFn[p.actions[0].type].fn(p);
   })
 
   // wait for a promise to finish

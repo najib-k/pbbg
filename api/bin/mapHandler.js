@@ -29,8 +29,18 @@ let map = {
     ]
 };
 
-function setTile(x, y, tile) {
+const TILE_TYPE =     [
+    { name: "water", color: "blue" },
+    { name: "land", color: "green" },
+    { name: "forest", color: "darkgreen" },
+];
+
+function setTile({x, y}, tile) {
     map.tilemap[y][x] = {...map.tilemap[y][x], ...tile};
+}
+
+function getTile({x, y}) {
+     return map.tilemap[y][x];
 }
 
 function getMap() {
@@ -39,5 +49,6 @@ function getMap() {
 
 module.exports = {
     getMap,
-    setTile
+    setTile,
+    getTile,
 }
