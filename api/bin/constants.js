@@ -15,28 +15,39 @@ const chatChannels = [
     "test", //test 1
 ]
 
-const user = {
-    default: {
-        stats : {
-            maxAction: 100,
-            health: 10,
-            defense: 1,
-            attack: 1,
-            level: 0,
-        },
-        currentActions: 0,
-        action: {
-            type: "idle",
-        }
-    }
-}
 
 const action = {
     STATUS: {
         NEW: "new",
         RUNNING: "running",
+        COMPLETED: "completed",
 
     }
+}
+
+const stats = {
+    GROWTH: {
+        health: 45,
+        defense: 2,
+        attack: 3,
+    }
+}
+const user = {
+    default: {
+        stats: {
+            maxAction: 100,
+            health: stats.GROWTH.health,
+            defense: stats.GROWTH.defense,
+            attack: stats.GROWTH.attack,
+            level: 1,
+            xp: 0,
+        },
+        currentActions: 100,
+    }
+}
+
+const battle = {
+    maxRounds: 50,
 }
 
 // Querry limit for chat messages
@@ -44,9 +55,11 @@ const action = {
 // TODO limit the actual querying.
 const chatMessageLimit = 100;
 
-module.exports =  {
+module.exports = {
+    battle,
     action,
     user,
+    stats,
     chatChannels,
     chatMessageLimit,
     ERROR,
