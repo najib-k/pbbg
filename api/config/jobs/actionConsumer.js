@@ -3,9 +3,10 @@ const { Player } = require("../models/Player");
 const { Inventory } = require("../models/Inventory");
 const { Item } = require("../models/Item");
 const {action} = require("../../bin/constants");
-const { spawnFromTile } = require("../../bin/spawnHandler");
+const { spawnFromTile, generateDrops } = require("../../bin/spawnHandler");
 const { Action } = require("../models/Action");
 const { fight } = require('../../bin/battleHandler');
+const { stringify } = require("querystring");
 
 const actionFn = {
   battling: {
@@ -19,9 +20,9 @@ async function generateNewBattle(p) {
     pTurn: true,
   };
 
+  //console.log("stats", JSON.stringify(b));
   p.actions[0].data = b;
-  p.actions[0].save(); 
-  (p.actions || (p.actions = [])).push(a);
+//  p.actions[0].save();
 }
 
 async function newBattleAction(p) {
@@ -30,16 +31,37 @@ async function newBattleAction(p) {
     type: "battling",
     status: action.STATUS.NEW,
     data: {},
-    player: p,
+    playerId: p.id,
   });
 
-  (p.actions || (p.actions = [])).push(a);
+}
+
+async function processDrops(p) {
+  let d = generateDrops(p.actions[0].data.ennemy.drop);
+
+  d.forEach((i) => {
+    let {uuid, amount, ...info} = i;
+    if (amount === 0) return;
+    if (uuid) {
+      Item.create({inventoryId: p.inventories[0].id, ...info});
+    }
+    else {
+      let others = p.inventories[0].others;
+      let { [i.id]: base = 0} = others;
+      p.inventories[0].others = {...others, [i.id]: amount + base};
+    }
+  })
+  
 }
 
 function processBattle(p, a = null) {
-  r = fight(p, p.action[0].data.ennemy, p.action[0].status);
-  if (end) {
-    p.action[0].status = action.STATUS.COMPLETED;
+  r = fight(p, p.actions[0].data.ennemy, p.actions[0].status);
+  if (r.end) {
+    p.actions[0].status = action.STATUS.COMPLETED;
+    if (r.win) {
+      console.log("won, gennerating drop");
+      processDrops(p);
+    }
   } else {    
     p.actions[0].status = action.STATUS.RUNNING;
   }
@@ -47,19 +69,21 @@ function processBattle(p, a = null) {
 
 async function battlingAction(p) {
   //p.currentActions -= 1;
+  if (p.lastAction) p.lastAction.lastActionPlayerId = null;
+  p.actions[0].lastActionPlayerId = p.id;
   if (p.actions[0].status === action.STATUS.NEW) {
     await generateNewBattle(p);
   }
   processBattle(p);
-  p.lastAction = p.actions[0];
   if (p.actions[0].status === action.STATUS.COMPLETED) {
-    if (p.actions.length > 1) {
-      p.actions = p.actions.slice(1);
-    } else {
-      p.actions = [await newBattleAction(p)];
+    if (p.actions.length <= 1) {
+      await newBattleAction(p);
     }
   }
-  p.save();
+  await p.inventories[0].save();
+  await p.actions[0].save();
+  await p.save();
+  console.log("Final infos: \n", p.actions[0].status, " inventory\n", JSON.stringify(p.inventories[0]));
 }
 
 async function actionConsumer() {
@@ -67,15 +91,18 @@ async function actionConsumer() {
     currentActions: {
       [Op.gt]: 0,
     }
-  }, include: [{model: Action, as: "actions", required: true}, {model: Inventory, include: [{model: Item}]}],
+  }, include: [{model: Action, as: 'actions' , required: true, where: { status: {[Op.notLike]: action.STATUS.COMPLETED}}}, {model: Action, as: 'lastAction'}, {model: Inventory, include: [{model: Item}]}],
   attributes: {exclude: ['password']}});
 
-  ps.forEach((p) => {
-    actionFn[p.actions[0].type].fn(p);
+  //console.log(`Recovered: ${JSON.stringify(ps)}`);
+
+  ps.forEach(async (p) => {
+    console.log("invent at start: ", JSON.stringify(p.inventories[0]))
+    await actionFn[p.actions[0].type].fn(p);
   })
 
   // wait for a promise to finish
-  console.log("action consumed");
+  console.log("actions consumed");
   return new Date(Date.now() + 6000);
 
 };
