@@ -1,3 +1,5 @@
+const { getRandomInt } = require('./utils')
+
 let map = {
     width: 20,
     height: 20,
@@ -30,9 +32,9 @@ let map = {
 };
 
 const TILE_TYPE =     [
-    { name: "water", color: "blue" },
-    { name: "land", color: "green" },
-    { name: "forest", color: "darkgreen" },
+     "water",
+     "land", 
+     "forest",
 ];
 
 function setTile({x, y}, tile) {
@@ -40,15 +42,23 @@ function setTile({x, y}, tile) {
 }
 
 function getTile({x, y}) {
-     return map.tilemap[y][x];
+     return {type: TILE_TYPE[map.tilemap[y][x].type]};
 }
 
 function getMap() {
     return map;
 }
 
+function generateRandomPos() {
+    let x = getRandomInt(map.width);
+    let y = getRandomInt(map.height);
+
+    return {x, y}
+}
+
 module.exports = {
     getMap,
     setTile,
     getTile,
+    generateRandomPos,
 }
