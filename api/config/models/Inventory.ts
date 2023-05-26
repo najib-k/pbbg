@@ -10,7 +10,6 @@ export class Inventory extends Model {
 
     @Column({
         type: DataType.JSON,
-        defaultValue: {}
     })
     others?: JSON;
 

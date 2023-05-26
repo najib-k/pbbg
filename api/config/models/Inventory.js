@@ -18,7 +18,6 @@ __decorate([
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.JSON,
-        defaultValue: {}
     })
 ], Inventory.prototype, "others", void 0);
 __decorate([

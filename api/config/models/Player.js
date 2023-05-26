@@ -40,17 +40,28 @@ __decorate([
 ], Player.prototype, "stats", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.JSON
+    })
+], Player.prototype, "pos", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER
     })
 ], Player.prototype, "currentActions", void 0);
 __decorate([
-    (0, sequelize_typescript_1.HasMany)(() => Action_1.Action, 'playerId')
+    (0, sequelize_typescript_1.HasMany)(() => Action_1.Action, {
+        foreignKey: 'playerId',
+        as: 'actions'
+    })
 ], Player.prototype, "actions", void 0);
 __decorate([
-    (0, sequelize_typescript_1.HasOne)(() => Action_1.Action, 'playerId')
+    (0, sequelize_typescript_1.HasOne)(() => Action_1.Action, {
+        foreignKey: 'lastActionPlayerId',
+        as: 'lastAction'
+    })
 ], Player.prototype, "lastAction", void 0);
 __decorate([
-    (0, sequelize_typescript_1.HasMany)(() => Inventory_1.Inventory)
+    (0, sequelize_typescript_1.HasMany)(() => Inventory_1.Inventory, 'playerId')
 ], Player.prototype, "inventories", void 0);
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => Message_1.Message, 'playerId')

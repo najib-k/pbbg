@@ -1,5 +1,4 @@
-import { Table, Column, DataType, Model, ForeignKey, BelongsTo, HasMany, PrimaryKey } from 'sequelize-typescript';
-import { Player } from './Player';
+import { Table, Column, DataType, Model, ForeignKey, BelongsTo, PrimaryKey } from 'sequelize-typescript';
 import { Inventory } from './Inventory';
 
 @Table

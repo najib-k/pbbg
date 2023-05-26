@@ -31,17 +31,28 @@ export class Player extends Model {
     stats?: JSON;
 
     @Column({
+        type: DataType.JSON
+    })
+    pos?: JSON;
+
+    @Column({
         type: DataType.INTEGER
     })
     currentActions?: number;
 
-    @HasMany(() => Action, 'playerId')
+    @HasMany(() => Action, {
+        foreignKey: 'playerId',
+        as: 'actions'
+    })
     actions?: Action[];
 
-    @HasOne(() => Action, 'playerId')
+    @HasOne(() => Action, {
+        foreignKey: 'lastActionPlayerId',
+        as: 'lastAction'
+    })
     lastAction?: Action;
 
-    @HasMany(() => Inventory)
+    @HasMany(() => Inventory, 'playerId')
     inventories?: Inventory[];
 
     @HasMany(() => Message, 'playerId')

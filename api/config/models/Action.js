@@ -15,12 +15,19 @@ __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING })
 ], Action.prototype, "type", void 0);
 __decorate([
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING })
+], Action.prototype, "status", void 0);
+__decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.JSON })
 ], Action.prototype, "data", void 0);
 __decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => Player_1.Player),
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER })
 ], Action.prototype, "playerId", void 0);
+__decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => Player_1.Player),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER })
+], Action.prototype, "lastActionPlayerId", void 0);
 __decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => Player_1.Player, 'playerId')
 ], Action.prototype, "player", void 0);
