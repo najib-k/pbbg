@@ -2,19 +2,21 @@ const { damageFormula } = require('./formulaHandler');
 const { battle, action } = require('./constants');
 
 function fight(a, d, status) {
+
     if (status === action.STATUS.NEW) {
-        a.stats.remainingHealth = a.health;
-        d.stats.remainingHealth = d.health;
+        a.stats = {...a.stats, remainingHealth: a.stats.health};
+        d.stats = {...d.stats, remainingHealth: d.stats.health};
     }
+
 
     for (i = 0; i < battle.maxRounds; i++ ) {
-        a.stats.remainingHealth -= damageFormula(a, d);
-        if (a.stats.remainingHealth <= 0) return {a, d, end: true, win: true};
-        d.stats.remainingHealth -= damageFormula(d, a);
-        if (d.stats.remainingHealth <= 0) return {a, d, end: true, win: false};
+        d.stats = {...d.stats, remainingHealth: d.stats.remainingHealth - damageFormula(a, d)};
+        if (d.stats.remainingHealth <= 0) return {end: true, win: true};
+        a.stats = {...a.stats, remainingHealth: a.stats.remainingHealth - damageFormula(d, a)};
+        if (a.stats.remainingHealth <= 0) return {end: true, win: false};
     }
 
-    return {a, d, end: false, win: false};
+    return {end: false, win: false};
 
 }
 

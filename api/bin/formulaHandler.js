@@ -8,7 +8,6 @@ function statFormula(l, mod) {
     attack = Math.ceil(stats.GROWTH.attack * l * attack);
     defense = Math.ceil(stats.GROWTH.defense * l * defense);
 
-
     return {
         health,
         attack,
@@ -17,8 +16,10 @@ function statFormula(l, mod) {
 }
 
 function damageFormula(a, d) {
-    let result = Math.floor(Math.min(Math.max(a.attack / d.defense, .4), 1.2) * a.attack);
-    return Math.min(Math.max(result, 1), d.remainingHealth);
+    
+    let result = Math.floor(Math.min(Math.max((a.stats.attack / d.stats.defense), .4), 1.2) * a.stats.attack) + 1;
+
+    return Math.min(result, d.stats.remainingHealth);
 }
 
 module.exports = {
