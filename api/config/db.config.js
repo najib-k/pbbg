@@ -8,6 +8,7 @@ let userpass =  process.env.DB_PASSWORD;
 let database = process.env.DB_NAME;
 let port = process.env.DB_PORT;
 let socket = process.env.SOCKET_PATH;
+let logging = process.env.SQ_LOGGING;
 
 console.log(__dirname);
 console.log("User: " + process.env.DB_USER);
@@ -29,6 +30,7 @@ const sequelize =  new Sequelize(database, user, userpass, {
         max: 10,
         timeout: 10000,
     },
+    logging: false,
     models: [__dirname + '/models']
 });
 
