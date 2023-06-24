@@ -30,7 +30,7 @@ const sequelize =  new Sequelize(database, user, userpass, {
         max: 10,
         timeout: 10000,
     },
-    logging: false,
+    logging: true,
     models: [__dirname + '/models']
 });
 

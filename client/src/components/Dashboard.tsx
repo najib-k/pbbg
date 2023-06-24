@@ -16,8 +16,8 @@ function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" href="">
+        Valiant
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -65,9 +65,8 @@ function DashboardContent() {
             <Grid item xs={10} >
               <Paper > <ActionDisplay /> </Paper>
             </Grid>
-
-
           </Grid>
+
           <Grid container spacing={2} sx={{ height: '55%' }}>
             <Grid item xs={2}>
               <Paper >2</Paper>
@@ -78,8 +77,8 @@ function DashboardContent() {
             <Grid item xs={2}>
               <Paper >2</Paper>
             </Grid>
-
           </Grid>
+
           <Grid container spacing={2} sx={{ minheight: '30%', maxHeight: '30%' }}>
             <Grid item xs={2}>
               <Paper >2</Paper>
@@ -90,14 +89,14 @@ function DashboardContent() {
             <Grid item xs={2}>
               <Paper >2</Paper>
             </Grid>
-
           </Grid>
-        </Box>
 
+        </Box>
 
         <Box>
           <Copyright></Copyright>
         </Box>
+
       </ThemeProvider>
     </SockProvider>
   );

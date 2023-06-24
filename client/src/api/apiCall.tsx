@@ -1,14 +1,15 @@
 //TODO global error handling with status messages.
 
+const token = localStorage.getItem("AuthProviderToken");
+const fetcher = (url, options:any = {}) => fetch(url, {...options, headers: {...options.headers || {}, 'Authorization': `Bearer ${token}`}}).then(res => res.json());
+
 const loginPOST = async (data: object) => {
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     };
-    return await fetch('login', requestOptions).then(response => {
-        return response.json();
-    });
+    return await fetcher('login', requestOptions);
 }
 
 const registerPOST = async(data: object) => {
@@ -17,23 +18,29 @@ const registerPOST = async(data: object) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     };
-    return await fetch('register', requestOptions).then(response => {
-        return response.json();
-    });
+    return await fetcher('register', requestOptions);
 }
 
 const chatChannelsGET = async () => {
-    return await fetch('chat/getChannels').then(response => { return response.json()});
+    return await fetcher('chat/getChannels');
 }
 
 const chatChannelMessageGET = async (id: number) => {
     const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify({channelId: id})
     };
-    return await fetch('chat/getChannelMessages', requestOptions).then(response => { return response.json()});
+    return await fetcher('chat/getChannelMessages', requestOptions);
+}
+
+/**
+ * 
+ * @returns /action/last PlayerData
+ */
+const actionLastGET = async () => {
+    return await fetcher('action/last');
 }
 
 
-export {loginPOST, registerPOST, chatChannelsGET, chatChannelMessageGET};
+export {loginPOST, registerPOST, chatChannelsGET, chatChannelMessageGET, actionLastGET};

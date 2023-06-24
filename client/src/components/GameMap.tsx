@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useLayoutEffect, forwardRef, useCallback } from 'react';
 import Box from '@mui/material/Box';
-import CSS from 'csstype'
+import CSS from 'csstype';
 import { SxProps } from '@mui/material/styles';
 import TilePopover from '../gameMap/TilePopover';
 import { bindHover, usePopupState } from 'material-ui-popup-state/hooks';
@@ -9,6 +9,10 @@ import {
     TransformComponent,
     ReactZoomPanPinchContentRef,
 } from "react-zoom-pan-pinch";
+import useSWR from 'swr';
+import { useActionData } from 'react-router-dom';
+import { useAuth } from './AuthProvider';
+import { usePlayer } from '../api/apiHooks';
 
 interface ITyleType {
     name: string,
@@ -22,13 +26,24 @@ const DEFAULT_TILES: ITyleType[] =
         { name: "forest", color: "darkgreen" },
     ];
 
-const Tile = forwardRef(function Tile({ tile, pos, size: { width, height }, player }: {
+function battling() {
+    const requestOptions = {
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem("AuthProviderToken")}` },
+    };
+    fetch('action/test', requestOptions).then(response => { return response.json() });
+
+}
+
+const Tile = forwardRef(function Tile({ tile, pos, size: { width, height }, boxRef }: {
     tile: number,
     pos: { x: number, y: number },
     size: any,
-    player: any,
+    boxRef: any,
 }, ref: any) {
     const popupState = usePopupState({ variant: 'popper', popupId: `tilePopover${pos.x}-${pos.y}` });
+    const { player, error, isLoading } = usePlayer();
+
+    let pPos = (player.pos.x === pos.x && player.pos.y === pos.y);
 
     let style: SxProps = {
         width: `${width}px`,
@@ -36,14 +51,14 @@ const Tile = forwardRef(function Tile({ tile, pos, size: { width, height }, play
         position: "absolute",
         top: `${(width * pos.x)}px`,
         left: `${(height * pos.y)}px`,
-        backgroundColor: player ? "whitesmoke" : DEFAULT_TILES[tile].color,
+        backgroundColor: pPos ? "whitesmoke" : DEFAULT_TILES[tile].color,
     };
 
     return (
         <>
-            <Box ref={ref} {...bindHover(popupState)} sx={style} id={(player) ? "player-pos" : ""}>
+            <Box ref={(pPos) ? boxRef : null} {...bindHover(popupState)} onClick={() => battling()} sx={style} id={(pPos) ? "player-pos" : ""}>
             </Box>
-            <TilePopover {...pos} terrain={DEFAULT_TILES[tile].name} popupState={popupState} player={player} />
+            <TilePopover {...pos} terrain={DEFAULT_TILES[tile].name} popupState={popupState} player={pPos ? player : null} />
         </>
     )
 })
@@ -89,7 +104,7 @@ const map: IMap = {
     ]
 }
 
-function usePlayer() {
+function usePlayerTest() {
     const [player, _] = useState({
         pos: {
             x: 14,
@@ -106,16 +121,17 @@ function usePlayer() {
 
     return player;
 }
+
 export default function GameMap() {
     const [worldMap, setWorldMap] = useState<IMap | null>(null);
     const [tiles, setTiles] = useState(null);
     const boxRef = useRef(null);
     const wrapRef = useRef<ReactZoomPanPinchContentRef | null>(null);
-    const player = usePlayer();
+    const { player, error, isLoading } = usePlayer();
 
     const updatePath = useCallback(() => {
         const canvas: any = document.getElementById("mapCanvas");
-        if (!canvas || !worldMap || !player) return; //maybe alert
+        if (!canvas || !worldMap || !player?.path) return; //maybe alert
         const ctx: CanvasRenderingContext2D = canvas.getContext("2d");
         ctx.beginPath();
         ctx.lineWidth = 4;
@@ -144,8 +160,7 @@ export default function GameMap() {
             if (worldMap) {
                 tileList = worldMap!.tilemap.map((row, x) => {
                     return row.map((tile, y) => {
-                        let { pos } = player;
-                        return <Tile ref={(pos.x === x && pos.y === y) ? boxRef : null} key={`tile-${x}-${y}`} tile={tile} pos={{ x, y }} size={worldMap.tileSize} player={(pos.x === x && pos.y === y) ? player : null}></Tile>
+                        return <Tile boxRef={boxRef} key={`tile-${x}-${y}`} tile={tile} pos={{ x, y }} size={worldMap.tileSize}></Tile>
                     })
                 })
             }
@@ -165,15 +180,17 @@ export default function GameMap() {
         return () => {
 
         };
-    }, [worldMap, boxRef, wrapRef, player, updatePath])
+    }, [worldMap, boxRef, wrapRef, updatePath])
 
     /*     useEffect(() => {
-            scrroll to particular element
-            let section = document.querySelector('#player-pos');
-            if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    
-        }, []) */
+        scrroll to particular element
+        let section = document.querySelector('#player-pos');
+        if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+    }, []) */
 
+    if (isLoading) return (<>Loading...</>);
+    if (error) return (<>Error: {error}</>);
     return (
 
         <TransformWrapper

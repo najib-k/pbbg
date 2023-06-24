@@ -38,6 +38,7 @@ async function newBattleAction(p) {
 
 async function processDrops(p) {
   let d = generateDrops(p.actions[0].data.ennemy.drop);
+  let droplog = [];
 
   d.forEach((i) => {
     let {uuid, amount, ...info} = i;
@@ -48,9 +49,11 @@ async function processDrops(p) {
     else {
       let others = p.inventories[0].others;
       let { [i.id]: base = 0} = others;
+      droplog.push({amount, ...info});
       p.inventories[0].others = {...others, [i.id]: amount + base};
     }
   })
+  p.actions[0].data = {...p.actions[0].data, droplog};
   
 }
 

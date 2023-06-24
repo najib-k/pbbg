@@ -10,7 +10,6 @@ const useAuth: any = () => useContext(AuthContext);
 const AuthProvider = (props: any) => {
     let { children } = props;
     const [token, setToken] = useState(localStorage.getItem("AuthProviderToken") ?? null);
-    const [player, setPlayer] = useState(null);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -21,8 +20,6 @@ const AuthProvider = (props: any) => {
             localStorage.setItem("AuthProviderToken", res.token);
             setToken(res.token);
             const origin = location.state?.from?.pathname || '/dashboard';
-            if (res.player)
-                setPlayer(res.player);
             navigate(origin);
         } else {
             return res;
@@ -52,7 +49,6 @@ const AuthProvider = (props: any) => {
 
     const value = {
         token,
-        player,
         onLogin: handleLogin,
         onlogout: handleLogout,
         onRegister: handleRegister,

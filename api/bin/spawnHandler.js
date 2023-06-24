@@ -30,7 +30,7 @@ const monsterDefs = [
                 id: 0,
                 uuid: false,
                 drc: 90, //rate
-                amount: [5, 35, 75, 5] // [min, max, re-drc, step]
+                amount: [1, 10, 75, 1] // [min, max, re-drc, step]
             }
         ]
 

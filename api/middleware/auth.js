@@ -3,10 +3,10 @@ const jwt = require("jsonwebtoken");
 
 exports.verifyToken = function(req, res, next) {
     //TODO: REMOVE FOR PRODUCTION
-    if (process.env.NODE_ENV !== 'production') {
+    /* if (process.env.NODE_ENV !== 'production') {
         console.log("SKIPPED JWT, DEV MODE ON");
         return next();
-    }
+    } */
 
     const authBearer = req.headers.authorization;
 

@@ -9,9 +9,16 @@ const { Inventory } = require('../config/models/Inventory');
 router.use(verifyToken);
 
 router.get('/last', async function(req, res, next) {
-    let p = await Player.findOne({where: {id: req.player.id}, include: [{model: Action, as: "lastAction", required: true}], attributes: { exclude: ["id", "password", "channels", "messages", "mail"]}});
+    let p = await Player.findOne({where: {id: req.player.id}, include: [{model: Action, as: "lastAction"}, {model: Inventory}], attributes: { exclude: ["password", "channels", "messages", "mail"]}});
+    console.log(p);
+    res.json(p);
+});
 
-    res.json(p ? p : {idle: true});
+router.get('/refresh', async function(req, res, next) {
+    let p = await Player.findOne({where: {id: req.player.id}, attributes: ["currentActions", "stats"]});
+    p.currentActions = p.stats.maxAction;
+    p.save();
+    res.status(200).send(p.stats.maxAction);
 });
 
 router.get('/test', async function(req, res, next) {
