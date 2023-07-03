@@ -1,4 +1,4 @@
-import { useState, useEffect, CSSProperties } from 'react';
+import { useState, useEffect, CSSProperties, useRef } from 'react';
 import { usePlayer } from '../api/apiHooks';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Grid, LinearProgress, Typography, listItemAvatarClasses } from '@mui/material';
@@ -38,6 +38,7 @@ export default function ActionDisplay(props) {
     const { player, error, isLoading } = usePlayer();
     const [progress, setProgress] = useState(0);
     const [log, setLog] = useState<any>(null);
+    const prog = useRef({d: Date.now(), p: 0});
 
 
     /**
@@ -47,19 +48,32 @@ export default function ActionDisplay(props) {
      * kind of a hack but much easier than dealing with real-time fetch
      */
     useEffect(() => {
+        prog.current.p = 0;
+        setProgress(0);
         if (player === null) return;
         if (!player?.lastAction)
             return;
 
         const timer = setInterval(() => {
-            let prog = (Date.now() % duration) / duration * 100;
+            /* let prog = (Date.now() % duration) / duration * 100;
             if (prog <= 5) {
                 const { droplog = [] } = player.lastAction.data;
                 if (droplog) {
                     setLog(droplog);
                 }
             }
-            setProgress(prog);
+            setProgress(prog); */
+            let {d, p} = prog.current;
+            d = Date.now();
+            p += (d - prog.current.d) / duration * 100;
+            prog.current = {d , p: Math.min( p, 100)};
+            if (prog.current.p <= 5) {
+                const { droplog = [] } = player.lastAction.data;
+                if (droplog) {
+                    setLog(droplog);
+                }
+            }
+            setProgress(prog.current.p);
         }, 500);
 
         return () => {

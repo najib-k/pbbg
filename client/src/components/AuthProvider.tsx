@@ -22,7 +22,8 @@ const AuthProvider = (props: any) => {
             const origin = location.state?.from?.pathname || '/dashboard';
             navigate(origin);
         } else {
-            return res;
+            navigate('/');
+           console.log(res);
         }
     };
 
@@ -31,8 +32,9 @@ const AuthProvider = (props: any) => {
         const res = await registerPOST(data);
         //Un peu con non ? Token pas utile si on redirige pas sur le dashboard avec infos Player derrière
         if (res.token) {
+            localStorage.setItem("AuthProviderToken", res.token);
             setToken(res.token);
-            const origin = '/';
+            const origin = '/dashboard';
             navigate(origin);
         } else {
             return res;
@@ -47,6 +49,10 @@ const AuthProvider = (props: any) => {
         navigate('/');
     }
 
+    //autentify on refresh or close
+    if (!token) {
+        navigate('/');
+    }
     const value = {
         token,
         onLogin: handleLogin,

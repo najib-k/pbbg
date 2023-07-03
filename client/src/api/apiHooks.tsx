@@ -52,7 +52,7 @@ interface PlayerData {
  * @returns {PlayerData} 
  */
 function usePlayer () {
-    const { data, error, isLoading } : {data: PlayerData, error: any, isLoading: any} = useSWR("action/last", fetcher, { refreshInterval: 3000 });
+    const { data, error, isLoading } : {data: PlayerData, error: any, isLoading: any} = useSWR("action/last", fetcher, { refreshInterval: 6000 });
 
     return {
         player: data,
