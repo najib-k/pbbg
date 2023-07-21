@@ -5,6 +5,7 @@
  */
 
 if (process.env.NODE_ENV !== 'production') {
+  console.log("Running in development mode")
   require('dotenv').config();
 }
 
@@ -21,6 +22,9 @@ const { PlayerChannels } = require('../config/models/PlayerChannels');
 const constants = require('./constants');
 const { join } = require('path');
 const { constant } = require('lodash');
+const cron = require('node-schedule');
+const actionConsumer = require('../config/jobs/actionConsumer');
+
 
 
 /**
@@ -168,6 +172,13 @@ io.on('connection', async (socket) => {
   });
 });
 
+/**
+ * Start CRON jobs
+ */
+
+cron.scheduleJob('*/6 * * * * *', async () => {
+  actionConsumer();
+});
 
 /**
  * Listen on provided port, on all network interfaces.

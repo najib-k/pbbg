@@ -1,6 +1,6 @@
 import { Table, Column, DataType, Model, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
 import { Player } from './Player';
-import { Item } from './Items';
+import { Item } from './Item';
 
 @Table
 export class Inventory extends Model {
@@ -10,13 +10,13 @@ export class Inventory extends Model {
 
     @Column({
         type: DataType.JSON,
-        defaultValue: {}
     })
     others?: JSON;
 
     @ForeignKey(() => Player)
-    playerId!: Player;
+    @Column({type: DataType.INTEGER})
+    playerId?: number;
 
-    @BelongsTo(() => Player, 'playerId')
+    @BelongsTo(() => Player)
     player!: Player;
 }

@@ -10,6 +10,8 @@ const constants = require('../bin/constants');
 const { Channel } = require('../config/models/Channel');
 const { Message } = require('../config/models/Message');
 const { orderByDate } = require('./routeUtils');
+const { generateRandomPos } = require('../bin/mapHandler');
+const { Inventory } = require('../config/models/Inventory');
 
 /* GET home page. */
 async function initChannels(playerId) {
@@ -43,8 +45,13 @@ router.post('/register', async function (req, res, next) {
         return res.status(400).send({ error: "Error during account creation, please contact an admin." });
       }
       const player = await Player.create({
-        name: req.body.name, mail: req.body.mail, password: hash
+        name: req.body.name, mail: req.body.mail, password: hash,
+        stats: {...constants.user.default.stats},
+        currentActions: constants.user.default.currentActions,
+        pos: generateRandomPos(),
       });
+
+      await Inventory.create({others: {}, playerId: player.id});
 
       // Create relation to basic chat channels, passing only player.id newly created
       await initChannels(player.id);

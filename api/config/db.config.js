@@ -8,6 +8,7 @@ let userpass =  process.env.DB_PASSWORD;
 let database = process.env.DB_NAME;
 let port = process.env.DB_PORT;
 let socket = process.env.SOCKET_PATH;
+let logging = process.env.SQ_LOGGING;
 
 console.log(__dirname);
 console.log("User: " + process.env.DB_USER);
@@ -29,6 +30,7 @@ const sequelize =  new Sequelize(database, user, userpass, {
         max: 10,
         timeout: 10000,
     },
+    logging: true,
     models: [__dirname + '/models']
 });
 
@@ -44,11 +46,13 @@ async function start() {
         console.log("DB connection up.");
         console.log(sequelize.isDefined('Player'));
         //{force:true} drops the DB in case of model changes.
-        sequelize.sync().catch((value) => {console.log(value)}).then(() => {console.log("Sync OK")});
+        sequelize.sync({force: process.env.SQ_FORCE}).catch((value) => {console.log(value)}).then(() => {console.log("Sync OK")
         createStaticChatChannels();
+    });
+        
     } catch (error) {
         console.error('database: ', database, " | user: ", user);
-        console.error('DB connection error: ', error);
+        console.error('DB connection error: ', JSON.stringify(error));
     }
 };
 

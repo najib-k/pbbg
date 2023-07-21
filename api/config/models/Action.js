@@ -6,28 +6,32 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Inventory = void 0;
+exports.Action = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const Player_1 = require("./Player");
-const Item_1 = require("./Item");
-let Inventory = class Inventory extends sequelize_typescript_1.Model {
+let Action = class Action extends sequelize_typescript_1.Model {
 };
 __decorate([
-    (0, sequelize_typescript_1.HasMany)(() => Item_1.Item)
-], Inventory.prototype, "uuids", void 0);
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING })
+], Action.prototype, "type", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.JSON,
-    })
-], Inventory.prototype, "others", void 0);
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING })
+], Action.prototype, "status", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.JSON })
+], Action.prototype, "data", void 0);
 __decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => Player_1.Player),
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER })
-], Inventory.prototype, "playerId", void 0);
+], Action.prototype, "playerId", void 0);
 __decorate([
-    (0, sequelize_typescript_1.BelongsTo)(() => Player_1.Player)
-], Inventory.prototype, "player", void 0);
-Inventory = __decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => Player_1.Player),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER })
+], Action.prototype, "lastActionPlayerId", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => Player_1.Player, 'playerId')
+], Action.prototype, "player", void 0);
+Action = __decorate([
     sequelize_typescript_1.Table
-], Inventory);
-exports.Inventory = Inventory;
+], Action);
+exports.Action = Action;
