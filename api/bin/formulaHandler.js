@@ -1,5 +1,11 @@
 const {stats} = require('./constants');
 
+const modFunction = {
+    "+": (b, v) => b + v,
+    "*": (b, v) => b * v,
+    "-": (b, v) => b - v,
+}
+
 /**
  * 
  * @param {number} l level
@@ -45,8 +51,23 @@ function affStatFormula(mod, r, lvl){
     return result;
 }
 
+function manhattanDistanceFormula(p, p2) {
+    return Math.abs(p.x - p2.x) + Math.abs(p.y - p2.y);
+}
+
+function modFormula(base, mod) {
+    mod.forEach(({value, stat, op}) => {
+        if (!base?.[stat]) return (base[stat] = value);
+
+        return modFunction[op](base[stat], value);
+    });
+    return base;
+}
+
 module.exports = {
     statFormula,
     damageFormula,
     affStatFormula,
+    manhattanDistanceFormula,
+    modFormula,
 }

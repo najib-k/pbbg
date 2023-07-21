@@ -21,7 +21,7 @@ const action = {
         NEW: "new",
         RUNNING: "running",
         COMPLETED: "completed",
-
+        NONE: "none",
     }
 }
 
@@ -50,6 +50,13 @@ const battle = {
     maxRounds: 50,
 }
 
+const move = {
+    try: 1.2,
+    cBuff: 1.7,
+    danger: 0.95,
+    minPass: 5,
+}
+
 // Querry limit for chat messages
 // Currently used outside of query
 // TODO limit the actual querying.
@@ -60,6 +67,7 @@ module.exports = {
     action,
     user,
     stats,
+    move,
     chatChannels,
     chatMessageLimit,
     ERROR,
