@@ -5,6 +5,7 @@ const { Action } = require('../config/models/Action');
 const { Player } = require('../config/models/Player');
 const { action } = require('../bin/constants');
 const { Inventory } = require('../config/models/Inventory');
+const mh = require('../bin/mapHandler');
 
 router.use(verifyToken);
 
@@ -44,6 +45,14 @@ router.get('/testinv', async function(req, res, next) {
         0
     ].save();
     res.status(200).send({message: "success"});
+})
+
+router.get('/move', async function(req, res, next) {
+    let pl = await Player.findOne({where: {id: req.player.id}, attributes: ["pos"]});
+    let d = req.body.destination;
+    let p = mh.moveActionBuildPath(pl.pos, d);
+
+    res.status(200).json(p);
 })
 
 module.exports = router;
