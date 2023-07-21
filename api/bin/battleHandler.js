@@ -1,11 +1,13 @@
 const { damageFormula } = require('./formulaHandler');
 const { battle, action } = require('./constants');
 
-function fight(a, d, status) {
+function fight(a, d, status, noMobReset = false) {
 
     if (status === action.STATUS.NEW) {
         a.stats = {...a.stats, remainingHealth: a.stats.health};
         d.stats = {...d.stats, remainingHealth: d.stats.health};
+    } else if (noMobReset) {
+        a.stats = {...a.stats, remainingHealth: a.stats.health};
     }
 
 

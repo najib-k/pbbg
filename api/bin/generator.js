@@ -210,8 +210,8 @@ function generateAff(r, lvl) {
 }
 
 function getQuality(idx) {
-    let mx = Math.floor(quality.length, idx + dropConfig.maxQ);
-    let mn = Math.ceil(0, idx + dropConfig.minQ);
+    let mx = Math.min(quality.length, idx + dropConfig.maxQ); //length or less
+    let mn = Math.max(0, idx + dropConfig.minQ); //0 or higher
 
     return quality[getRandomInt(mx, mn)];
 }
@@ -229,7 +229,7 @@ function generateKeywords(r, mt) {
     return kl;
 }
 
-function generateUniqueItem(lvl, mnR = (rarityRates.length - 1), mt = {}) {
+function generateUniqueItem({lvl, mnR = (rarityRates.length - 1), mt = {}}) {
     let {r, idx} = getRarity(mnR);
     r.quality = getQuality(idx);
     r.affixes = generateAff(r, lvl);
@@ -248,9 +248,13 @@ let result = {
     Blessed: 0,
     Artifact: 0,
 };
-let lvl = 100;
+
+let options = {
+    lvl: 100
+};
+
 for (let x = 0; x < 1; x++) {
-    let n = generateUniqueItem(lvl);
+    let n = generateUniqueItem({options});
     console.log(n)
     result[n.name] = result[n.name] + 1 || 1;
 }

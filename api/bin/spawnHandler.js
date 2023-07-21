@@ -1,6 +1,7 @@
 const { getTile } = require('./mapHandler');
 const { statFormula } = require('./formulaHandler')
 const { getRandomInt } = require('./utils');
+const debug = require('debug')('spawn');
 
 const spawnByZone = {
     water: [0,],
@@ -75,13 +76,11 @@ function generateDrops(d) {
     return monsterDefs[d].drop.map((i) => {
         let {id, drc, uuid, amount } = i;
         let rng = getRandomInt(100);
-        console.log("rng: ", rng, JSON.stringify(i));
         if (drc >= rng) {
             let [mn = 0, mx = drops.defaultMax, rate = 100, step = 1] = amount;
-            console.log(mn, mx, rate, step);
             let a = mn;
             for (; a <= mx && rate >= getRandomInt(100); a += step);
-            console.log(`Dropped ${a} ${items[id].name}`);
+            debug(`Dropped ${a} ${items[id].name}`);
             return {
                 id,
                 name: items[id].name,
