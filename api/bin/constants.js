@@ -22,7 +22,16 @@ const action = {
         RUNNING: "running",
         COMPLETED: "completed",
         NONE: "none",
-    }
+    },
+    GATHERING_SUB: {
+        mining: "mining",
+        fishing: "fishing",
+        quarrying: "quarrying",
+        foraging: "foraging",
+    },
+    GATHERING: "gathering",
+    BATTLING: "battling",
+    MOVING: "moving",
 }
 
 const stats = {
@@ -30,8 +39,31 @@ const stats = {
         health: 45,
         defense: 2,
         attack: 3,
+        chc: 0.6,
+        chd: 1,
+    },
+    AFFGROWTH: {
+        health: 4.6,
+        defense: 2,
+        attack: 3,
+        chc: 0.6,
+        chd: 1,
     }
 }
+
+const affixes = {
+    genLvlMax: 1.3,
+    genLvlMin: 0.9,
+}
+
+const default_mod = {
+    health: {op: '+', value: stats.AFFGROWTH.health},
+    defense: {op: '+', value: stats.AFFGROWTH.defense},
+    attack: {op: '+', value: stats.AFFGROWTH.attack},
+    chd: {op: '*', value: stats.AFFGROWTH.chd},
+    chc: {op: '*', value: stats.AFFGROWTH.chc},
+}
+
 const user = {
     default: {
         stats: {
@@ -55,6 +87,7 @@ const move = {
     cBuff: 1.7,
     danger: 0.95,
     minPass: 5,
+    defaultPass: 10,
 }
 
 // Querry limit for chat messages
@@ -71,4 +104,6 @@ module.exports = {
     chatChannels,
     chatMessageLimit,
     ERROR,
+    default_mod,
+    affixes,
 }

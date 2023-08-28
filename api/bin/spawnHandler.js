@@ -1,6 +1,8 @@
 const { getTile } = require('./mapHandler');
 const { statFormula } = require('./formulaHandler')
 const { getRandomInt } = require('./utils');
+const { action } = require('./constants');
+const { generateUniqueItem } = require('./generator');
 const debug = require('debug')('spawn');
 
 const spawnByZone = {
@@ -20,6 +22,7 @@ const monsterDefs = [
             all: .7,
             attack: .5,
         },
+        keywords: [],
         drop: [
             {
                 id: 1,
@@ -35,20 +38,54 @@ const monsterDefs = [
             }
         ]
 
-    }
+    },
+    {
+        name: "dragon",
+        lvl: [1, 2], //[min, max]
+        modifiers: {
+            all: .7,
+            attack: .5,
+        },
+        keywords: [0, 1, 2],
+        drop: [
+            {
+                id: 1,
+                uuid: false,
+                drc: 50, //rate
+                amount: [1, 3, 60, 1] // [min, max, re-drc, step]
+            },
+            {
+                id: 0,
+                uuid: false,
+                drc: 90, //rate
+                amount: [1, 10, 75, 1] // [min, max, re-drc, step]
+            }
+        ]
+
+    },
 ]
 
 const items = [
     {
+        id: 0,
         name: "gold",
         stack: -1,
     },
     {
+        id: 1,
         name: "potion",
         stack: 64,
     },
 
 ]
+
+const ressources = {
+    [action.GATHERING_SUB.mining]: [{id: 100, name: "copper"}],
+    [action.GATHERING_SUB.foraging]: [{id: 200, name: "wheat"}],
+    [action.GATHERING_SUB.quarrying]: [{id: 300, name: "rock"}],
+    [action.GATHERING_SUB.fishing]: [{id: 400, name: "Nemo"}],
+
+}
 
 function generateMonsterProfile(id) {
     let {name, lvl: [mn, mx], drop, modifiers} = monsterDefs[id];
@@ -69,11 +106,17 @@ function spawnFromTile(p) {
 }
 
 const drops = {
-    defaultMax: 10
+    defaultMax: 10,
+    defaultItemRate: 99,
 };
 
-function generateDrops(d) {
-    return monsterDefs[d].drop.map((i) => {
+function generateDrops(e, invId, ownerId) {
+    let result = [];
+    let {drop: d = []} = e;
+    if (getRandomInt(100) <= drops.defaultItemRate) {
+        result.push(generateUniqueItem({e, invId, ownerId}))
+    }
+    result.push(...monsterDefs[d].drop.map((i) => {
         let {id, drc, uuid, amount } = i;
         let rng = getRandomInt(100);
         if (drc >= rng) {
@@ -89,10 +132,20 @@ function generateDrops(d) {
             }
         }
         return {amount: 0};
-    })
+    }));
+
+    return result;
+}
+
+function generateRessource(type) {
+    let r = ressources[type][getRandomInt(ressources[type].length)];
+    //get amount depending on somethign like rarity vs level/proficiency to have infinite scaling
+    r.amount = 1;
+    return r;
 }
 
 module.exports = {
     spawnFromTile,
     generateDrops,
+    generateRessource,
 }

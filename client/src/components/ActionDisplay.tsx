@@ -7,6 +7,12 @@ import Box from '@mui/material/Box';
 
 const duration = 6000;
 
+const ActionComponents = {
+    "battling": BattlingAction,
+    "moving": MovingAction,
+    "gathering": GatheringAction,
+}
+
 function CombatProfile({ target }: any) {
     let { name, stats: { health, remainingHealth, attack, defense }, lvl } = target;
     let style: CSSProperties = {
@@ -34,11 +40,86 @@ function CombatProfile({ target }: any) {
     )
 }
 
+function MovingAction({ player }) {
+    let { type, data } = player.lastAction;
+    let { tries, pass, loot, combat } = data;
+    return (
+        <>
+            <Grid item xs={12}>
+                <Typography variant='h5' align='center'>
+                    STEP: {pass} / 10
+                </Typography>
+                <Typography variant='body1' align='center'>
+                    {tries} failed attempt so far.
+                </Typography>
+                <Typography variant="h4" gutterBottom align="center">
+                    {type}
+                </Typography>
+            </Grid>
+
+            <Grid container item xs={12}>
+                {combat?.status !== "none" && <>
+                    <Grid item>
+                        <CombatProfile target={player} />
+                    </Grid>
+                    <Grid item>
+                        <CombatProfile target={combat.data.ennemy} />
+                    </Grid>
+                </>}
+            </Grid>
+
+
+            <Grid item xs={12}>
+                <Box sx={{ width: "400px", height: "300px", overflowX: "wrap", overflowY: 'hidden' }}>
+                    {loot && loot.map(({ amount, name }) =>
+                        <Box>
+                            <Typography variant='body1'>
+                                {amount} {name}
+                            </Typography>
+                        </Box>
+                    )}
+                </Box>
+            </Grid>
+        </>
+    )
+}
+
+function GatheringAction({ player }) {
+    let { gathered: { name, amount }, type } = player.lastAction.data;
+    return (<>
+        <Typography> {type} </Typography>
+        <Typography>+{amount} {name}</Typography>
+    </>)
+}
+
+
+function BattlingAction({ player }) {
+    return (
+        <>
+            <Grid item xs={4}>
+                <CombatProfile target={player} />
+            </Grid>
+
+            <Grid item xs={4}>
+                <Typography variant="h4" gutterBottom align="center">
+                    {player.lastAction.type}
+                </Typography>
+            </Grid>
+
+            <Grid item xs={4}>
+                <CombatProfile target={player.lastAction.data.ennemy} />
+            </Grid>
+        </>
+    )
+}
+
 export default function ActionDisplay(props) {
     const { player, error, isLoading } = usePlayer();
     const [progress, setProgress] = useState(0);
     const [log, setLog] = useState<any>(null);
-    const prog = useRef({d: Date.now(), p: 0});
+    const prog = useRef({ d: Date.now(), p: 0 });
+
+    let Action = ActionComponents[player?.lastAction?.type] ?? null;
 
 
     /**
@@ -63,10 +144,10 @@ export default function ActionDisplay(props) {
                 }
             }
             setProgress(prog); */
-            let {d, p} = prog.current;
+            let { d, p } = prog.current;
             d = Date.now();
             p += (d - prog.current.d) / duration * 100;
-            prog.current = {d , p: Math.min( p, 100)};
+            prog.current = { d, p: Math.min(p, 100) };
             if (prog.current.p <= 5) {
                 const { droplog = [] } = player.lastAction.data;
                 if (droplog) {
@@ -88,27 +169,15 @@ export default function ActionDisplay(props) {
     return (
         <>
             <Box sx={{ width: "100%", height: "100%", position: "relative", backgroundColor: "rgba(51, 204, 255, 0.7)", border: "10px" }}>
-                {(player.lastAction) ?
-                    <Grid container direction="row" justifyContent="space-between" alignItems="center">
-                        <Grid item xs={4}>
-                            <CombatProfile target={player} />
+                {true ?
+                    <>
+                        <Grid container direction="row" justifyContent="space-between" alignItems="center">
+                            {Action && <Action player={player} />}
                         </Grid>
-
-                        <Grid item xs={4}>
-                            <Typography variant="h4" gutterBottom align="center">
-                                {player.lastAction.type}
-                            </Typography>
-                        </Grid>
-
-                        <Grid item xs={4}>
-                            <CombatProfile target={player.lastAction.data.ennemy} />
-                        </Grid>
-                    </Grid>
+                        <LinearProgress variant="determinate" value={progress} sx={{ margin: "5px" }} />
+                    </>
                     : <Typography variant="h4" gutterBottom align="center">"Idle"</Typography>
                 }
-
-                {(player.lastAction) ? <LinearProgress variant="determinate" value={progress} sx={{ margin: "5px" }} />
-                    : null}
 
                 <Box>
                     {Array.isArray(log) && log.length > 0 ? log.map(({ amount, name }) => {

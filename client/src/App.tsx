@@ -10,6 +10,7 @@ import {
   Routes,
   Route,
 } from 'react-router-dom';
+import Test from './components/Test';
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
         <Box sx={{ height: '100vh' }}>
           <Routes>
             <Route index element={<Login />} />
+            <Route path='test' element={<Test/>}/>
             <Route path="dashboard" element={
               <ProtectedRoute>
                 <Dashboard />

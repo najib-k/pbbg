@@ -10,6 +10,9 @@ const useSock = () => useContext(SockContext);
 const  SockProvider = (props: any) => {
     let { children } = props;
     const {token} = useAuth();
+    if (!token) {
+        //TODO if no token then refuse con
+    }
     const socket = socketClient(SERVER, {auth: {token: token}, autoConnect: false});
     
     /* function setSockHandler(event, fn) {
