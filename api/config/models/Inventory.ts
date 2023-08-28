@@ -11,7 +11,7 @@ export class Inventory extends Model {
     @Column({
         type: DataType.JSON,
     })
-    others?: JSON;
+    others!: JSON;
 
     @ForeignKey(() => Player)
     @Column({type: DataType.INTEGER})

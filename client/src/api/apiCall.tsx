@@ -42,5 +42,9 @@ const actionLastGET = async () => {
     return await fetcher('action/last');
 }
 
+const actionEquipPOST = async (id) => {
+    return await fetcher(`action/equip/${id}`, {method: "POST"})
+}
 
-export {loginPOST, registerPOST, chatChannelsGET, chatChannelMessageGET, actionLastGET};
+
+export {loginPOST, registerPOST, chatChannelsGET, chatChannelMessageGET, actionLastGET, actionEquipPOST};

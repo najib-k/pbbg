@@ -26,15 +26,51 @@ __decorate([
 ], Item.prototype, "stats", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.JSON,
+        defaultValue: {}
+    })
+], Item.prototype, "quality", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.JSON,
+        defaultValue: {}
+    })
+], Item.prototype, "affixes", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.JSON,
+        defaultValue: {}
+    })
+], Item.prototype, "keywords", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER,
         allowNull: false
     })
 ], Item.prototype, "rarity", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.INTEGER,
+        allowNull: false
+    })
+], Item.prototype, "lvl", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.STRING
     })
 ], Item.prototype, "type", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.BOOLEAN,
+        defaultValue: false,
+    })
+], Item.prototype, "equipped", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.INTEGER,
+        allowNull: false
+    })
+], Item.prototype, "ownerId", void 0);
 __decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => Inventory_1.Inventory),
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER })

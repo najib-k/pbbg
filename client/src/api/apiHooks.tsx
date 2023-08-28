@@ -48,7 +48,7 @@ interface PlayerData {
 };
 
 /**
- * Hit /action/last every 3 seconds.
+ * Hit /action/last every 6 seconds.
  * @returns {PlayerData} 
  */
 function usePlayer () {
@@ -61,6 +61,17 @@ function usePlayer () {
     }
 }
 
+function useInventory() {
+    const { data, error, isLoading } = useSWR("users/inventory", fetcher, { refreshInterval: 1000 });
+
+    return {
+        inventory: data,
+        isLoading,
+        error,
+    }
+}
+
 export {
     usePlayer,
+    useInventory,
 }

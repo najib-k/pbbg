@@ -5,9 +5,15 @@
  * @returns random number.
  */
 function getRandomInt(max, min = 0) {
-    return Math.max(Math.floor(Math.random() * max), min);
+    return Math.floor(Math.random() * (max - min)) + min;
 }
+
+function getRandomFloat(max, min = 0) {
+    return ((Math.random() * (max - min)) + min).toFixed(2);
+}
+
 
 module.exports = {
     getRandomInt,
+    getRandomFloat,
 }
