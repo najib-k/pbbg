@@ -30,7 +30,7 @@ const sequelize =  new Sequelize(database, user, userpass, {
         max: 10,
         timeout: 10000,
     },
-    logging: true,
+    logging: false,
     models: [__dirname + '/models']
 });
 
@@ -46,7 +46,7 @@ async function start() {
         console.log("DB connection up.");
         console.log(sequelize.isDefined('Player'));
         //{force:true} drops the DB in case of model changes.
-        sequelize.sync({force: process.env.SQ_FORCE}).catch((value) => {console.log(value)}).then(() => {console.log("Sync OK")
+        sequelize.sync({force: false}).catch((value) => {console.log(value)}).then(() => {console.log("Sync OK")
         createStaticChatChannels();
     });
         

@@ -1,6 +1,9 @@
 const {stats} = require('./constants');
 
-const modFunction = {
+
+//Mods are stats upgrade.
+//Effects are conditionnal skills that can apply a mod.
+const modFn = {
     "+": (b, v) => b + v,
     "*": (b, v) => b * v,
     "-": (b, v) => b - v,
@@ -47,27 +50,31 @@ function damageFormula(a, d) {
  * @param {number} lvl Level
  */
 function affStatFormula(mod, r, lvl){
+    console.log("r", r)
     let result = (r**mod)*(lvl/100)+((1+(lvl/100))**r)*mod+(mod*lvl*(r/8));
-    return result;
+    return result.toFixed(2);
 }
 
 function manhattanDistanceFormula(p, p2) {
     return Math.abs(p.x - p2.x) + Math.abs(p.y - p2.y);
 }
 
-function modFormula(base, mod) {
-    mod.forEach(({value, stat, op}) => {
-        if (!base?.[stat]) return (base[stat] = value);
+function applyMods(base, mod) {
+    if (!mod) return base;
+    Object.keys(mod).forEach((stat) => {
+        let {value, op} = mod[stat];
+        if (!base?.[stat]) return (base[stat] = {value, op} );
 
-        return modFunction[op](base[stat], value);
+        base[stat].value = modFn[op](base[stat].value, value);
     });
     return base;
 }
+
 
 module.exports = {
     statFormula,
     damageFormula,
     affStatFormula,
     manhattanDistanceFormula,
-    modFormula,
+    applyMods,
 }
