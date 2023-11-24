@@ -41,11 +41,15 @@ const stats = {
         attack: 3,
         chc: 0.6,
         chd: 1,
+        initiative: 1,
+        evasion: 0,
+        hit: 1,
+        accuracy: 1,
     },
     AFFGROWTH: {
         health: 4.6,
-        defense: 2,
-        attack: 3,
+        defense: 1.4,
+        attack: 2.5,
         chc: 0.6,
         chd: 1,
     }
@@ -64,6 +68,11 @@ const default_mod = {
     chc: {op: '*', value: stats.AFFGROWTH.chc},
 }
 
+const ressources = {
+    mana: "mana",
+    stamina: "stamina",
+}
+
 const user = {
     default: {
         stats: {
@@ -71,6 +80,12 @@ const user = {
             health: stats.GROWTH.health,
             defense: stats.GROWTH.defense,
             attack: stats.GROWTH.attack,
+            initiative: 1,
+            evasion: 0,
+            hit: 1,
+            chc: 0,
+            chd: 30,
+            accuracy: 1,
             level: 1,
             xp: 0,
         },
@@ -79,7 +94,63 @@ const user = {
 }
 
 const battle = {
-    maxRounds: 50,
+    maxRounds: 5,
+    maxTicks: 150,
+    defaultChunk: 50,
+    maxHitRange: 150,
+    defaultEvasionHitRate: 0.15,
+    handlers: {
+        onStart: "onStart",
+        onRound: "onRound",
+        onChunk: "onChunk",
+        onTick: "onTick",
+        onAttack: "onAttack",
+        onDefense: "onDefense",
+        onDodge: "onDodge", //Dodged attack
+        onAttHit: "onAttHit", //attack hit target
+        onDefHit: "onDefHit", //Hit by attack
+        onHpLoss: "onHpLoss",
+        onHpGain: "onHpGain",
+        onDeath: "onDeath",
+        onMiss: "onMiss",
+    },
+    tree: {
+        defaultStartRes: {
+            [ressources.mana]: 10,
+            [ressources.stamina]: 10,
+        }
+    },
+    defaultAttack: "default",
+    logType: {
+        damage: "damage",
+        mod: "mod",
+        effect: "effect",
+        effectEnd: "effectEnd",
+        activation: "activation",
+        effectStack: "effectStack",
+        damageBuff: "damageBuff",
+    },
+    effectTypes: {
+        ability: "ability",
+        dot: "dot",
+        buff: "buff",
+        debuff: "debuff",
+        ranged: "ranged",
+        melee: "melee",
+        mono: "mono",
+        multi: "multi",
+        any: "any",
+        
+    }
+}
+
+const damageTypes = {
+    normal: "normal",
+    fire: "fire",
+    ice: "ice",
+    earth: "earth",
+    wind: "wind",
+    toxic: "toxic",
 }
 
 const move = {
@@ -106,4 +177,5 @@ module.exports = {
     ERROR,
     default_mod,
     affixes,
+    damageTypes,
 }

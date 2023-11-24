@@ -1,6 +1,6 @@
 const { UUIDV4 } = require('sequelize');
-const { generateUniqueItem } = require('./generator');
-const mh = require('./mapHandler');
+const { generateUniqueItem } = require('../generator');
+const mh = require('../mapHandler');
 const { randomUUID } = require('crypto');
 
 /* console.time("pathing")

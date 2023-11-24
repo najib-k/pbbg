@@ -190,6 +190,12 @@ function getRandomAffix(ar, lvl, dupes) {
     return { aff, id };
 }
 
+/**
+ * First kw is geartype, values are buffed depending on that.
+ * @param {*} obj 
+ * @param {*} lvl 
+ * @returns 
+ */
 function getMainAffix(obj, lvl) {
     const { rarity, keywords: kw } = obj;
 
@@ -235,7 +241,14 @@ function getQuality(idx) {
 
     return quality[getRandomInt(mx, mn)];
 }
-
+/**
+ * Gets a random kw from geartypes
+ * Then a random number fo keywords in defaults + mob keywords if any
+ * rarity defines how many kw
+ * @param {*} r 
+ * @param {*} mt 
+ * @returns 
+ */
 function generateKeywords(r, mt = {}) {
     let nbk = getRandomInt(r + 1, Math.trunc(r * dropConfig.minKword))
     console.log("min nbk", nbk)

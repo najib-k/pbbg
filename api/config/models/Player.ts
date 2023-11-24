@@ -4,6 +4,7 @@ import { PlayerChannels } from './PlayerChannels';
 import { Channel } from './Channel';
 import { Inventory } from './Inventory';
 import { Action } from './Action';
+import { Abilities } from './Abilities';
 
 @Table
 export class Player extends Model {
@@ -36,6 +37,12 @@ export class Player extends Model {
     pos?: JSON;
 
     @Column({
+        type: DataType.JSON,
+        defaultValue: "{}"
+    })
+    combatBehavior?: JSON;
+
+    @Column({
         type: DataType.INTEGER
     })
     currentActions?: number;
@@ -51,6 +58,9 @@ export class Player extends Model {
         as: 'lastAction'
     })
     lastAction?: Action;
+
+    @HasOne(() => Abilities)
+    abilities?: Abilities;
 
     @HasMany(() => Inventory, 'playerId')
     inventories?: Inventory[];

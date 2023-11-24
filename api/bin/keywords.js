@@ -76,7 +76,13 @@ const keywords = {
                 }
             }
         },
-    ]
+    ],
+    weaponTypes: {
+        sword: "sword",
+        dagger: "dagger",
+        bow: "bow",
+        wand: "wand",
+    }
 };
 
 module.exports = keywords;

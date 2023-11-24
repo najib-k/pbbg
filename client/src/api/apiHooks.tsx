@@ -62,7 +62,7 @@ function usePlayer () {
 }
 
 function useInventory() {
-    const { data, error, isLoading } = useSWR("users/inventory", fetcher, { refreshInterval: 1000 });
+    const { data, error, isLoading } = useSWR("users/inventory", fetcher, { refreshInterval: 2000 });
 
     return {
         inventory: data,

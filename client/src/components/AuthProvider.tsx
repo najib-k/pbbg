@@ -42,7 +42,6 @@ const AuthProvider = (props: any) => {
     };
 
     //Remove token and navigate back to login.
-    //TODO remove from local storage
     const handleLogout = () => {
         localStorage.removeItem("AuthProviderToken");
         setToken(null);

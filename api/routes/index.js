@@ -12,6 +12,7 @@ const { Message } = require('../config/models/Message');
 const { orderByDate } = require('./routeUtils');
 const { generateRandomPos } = require('../bin/mapHandler');
 const { Inventory } = require('../config/models/Inventory');
+const { Abilities } = require('../config/models/Abilities');
 
 /* GET home page. */
 async function initChannels(playerId) {
@@ -51,7 +52,9 @@ router.post('/register', async function (req, res, next) {
         pos: generateRandomPos(),
       });
 
+      //creating basic related models
       await Inventory.create({others: {}, playerId: player.id});
+      await Abilities.create({playerId: player.id});
 
       // Create relation to basic chat channels, passing only player.id newly created
       await initChannels(player.id);

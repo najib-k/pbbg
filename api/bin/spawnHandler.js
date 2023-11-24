@@ -87,6 +87,11 @@ const ressources = {
 
 }
 
+/**
+ * 
+ * @param {*} id monster Id
+ * @returns {object} {name, lvl, drop: id, stats}
+ */
 function generateMonsterProfile(id) {
     let {name, lvl: [mn, mx], drop, modifiers} = monsterDefs[id];
 

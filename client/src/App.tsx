@@ -1,6 +1,6 @@
 //import logo from './logo.svg';
 import * as React from 'react';
-import './App.css';
+import './App.scss';
 import Box from '@mui/material/Box';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login'

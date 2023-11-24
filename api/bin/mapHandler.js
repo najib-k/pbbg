@@ -41,6 +41,7 @@ const TILE_TYPE = [
         type: "water", mod: {
             danger: 1, //how hard to traverse (% chance), mob diff ?
             pass: 25, // % to trigger combat
+            walkable: false, //default value for PF
 
         }
     },
@@ -48,6 +49,7 @@ const TILE_TYPE = [
         type: "land", mod: {
             danger: 1,
             pass: 25,
+            walkable: true,
 
         }
     },
@@ -55,11 +57,13 @@ const TILE_TYPE = [
         type: "forest", mod: {
             danger: 1,
             pass: 25,
+            walkable: true,
 
         }
     },
 ];
 
+//Which tiles types are unwalkable by default
 const invalid_move = [0];
 
 /**
@@ -69,13 +73,15 @@ const grid = new PF.Grid(walkableMatrix())
 const finder = new PF.AStarFinder();
 
 /**
+ * Creates a walkable matrix to be used for PF
+ * 
  * 1 = unwalkable
  * 0 = fine
  * @returns walkable stats matrix
  */
 function walkableMatrix() {
     let m = getMap();
-    return m.tilemap.map(r => r.map(t => invalid_move.includes(t.type) ? 1 : 0));
+    return m.tilemap.map(r => r.map(t => t.mod.walkable ? 0 : 1));
 }
 
 function setTile({ x, y }, tile) {
@@ -163,6 +169,8 @@ function visualisePath(path = []) {
 
 function moveActionBuildPath(current, dest) {
     let g = grid.clone(); //always clone, the algo trashes the grid it uses.
+    //see for weights: https://github.com/jbrown123/PathFinding.js/tree/master
+    //TODO: add weights
     let p = finder.findPath(current.x, current.y, dest.x, dest.y, g)
     return p.map((t) => {
         let [x, y] = t;

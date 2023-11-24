@@ -5,7 +5,7 @@ const { Item } = require("../models/Item");
 const { action, move } = require("../../bin/constants");
 const { spawnFromTile, generateDrops, generateRessource } = require("../../bin/spawnHandler");
 const { Action } = require("../models/Action");
-const { fight } = require('../../bin/battleHandler');
+const { fight, battlingProfile } = require('../../bin/battleHandler');
 const { traverseTile, getTile } = require('../../bin/mapHandler');
 const { stringify } = require("querystring");
 const { getRandomInt } = require("../../bin/utils");
@@ -128,7 +128,8 @@ async function movingAction(p) {
 
 function generateNewBattle(p) {
     let b = {
-        ennemy: spawnFromTile(p),
+        defender: battlingProfile(spawnFromTile(p)),
+        attacker: battlingProfile(p),
         pTurn: true,
     };
 
@@ -202,8 +203,8 @@ async function processDrops(e, inv, ownerId) {
  * @returns {object} {win, status}
  */
 function processBattle(p, options = {}, noMobReset = false) {
-    let { data, data: { ennemy }, status } = p.actions[0];
-    let { end, win } = fight(p, options?.ennemy || ennemy, options?.status || status, noMobReset);
+    let { data, data: { attacker, defender }, status } = p.actions[0];
+    let { end, win } = fight(attacker, options?.ennemy || defender, options?.status || status, noMobReset);
     let finalData = null;
     if (end) {
         if (win) {
